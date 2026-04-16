@@ -1,0 +1,3 @@
+*.kubeconfig
+artifacts/*.log
+artifacts/*.tmp
