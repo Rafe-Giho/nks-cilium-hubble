@@ -2,7 +2,7 @@
 
 - 목적: 실제 업무 애플리케이션 없이 Cilium, Ingress, Hubble 가시성을 검증할 최소 시나리오를 정의합니다.
 - 상태: draft
-- 마지막 갱신: 2026-04-16
+- 마지막 갱신: 2026-04-22
 
 ## 기본 원칙
 
@@ -29,6 +29,15 @@
    기대 결과: north-south 요청과 backend 연결 흐름 확인
 5. 선택 사항으로 간단한 NetworkPolicy 추가
    기대 결과: 허용/차단 변화가 Hubble에 반영
+
+## 성능/운영 관측 항목
+
+- 샘플 HTTP 요청 p50/p95 지연
+- 샘플 backend Pod CPU/메모리 사용량
+- Cilium/Hubble/Ingress 관련 Pod CPU/메모리 사용량
+- Node CPU/메모리 사용량
+- HPA 적용 시 scale-out 이벤트와 Hubble flow 변화
+- 설치/점검 단계 수와 장애 확인 지점 수
 
 ## 후속 비교 시나리오
 
