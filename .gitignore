@@ -1,3 +1,7 @@
 *.kubeconfig
 artifacts/*.log
 artifacts/*.tmp
+cilium-linux-*.tar.gz
+cilium-linux-*.tar.gz.sha256sum
+hubble-linux-*.tar.gz
+hubble-linux-*.tar.gz.sha256sum
