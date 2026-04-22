@@ -6,6 +6,7 @@
 
 ## 목표
 
+- sidecar-less 트래픽 모니터링의 유효한 구현 경로를 우선순위 기반으로 검토합니다.
 - NHN Cloud NKS에서 Cilium 적용 가능 여부를 검증합니다.
 - Cilium Ingress와 Hubble Relay/UI/CLI를 포함한 네트워크 관측 구성을 설계합니다.
 - 서비스메쉬 sidecar 오버헤드 대안으로서 운영 단순화 가능성을 확인합니다.
@@ -16,6 +17,7 @@
 - 기존 운영 경험상 서비스메쉬와 Jaeger 기반 구조는 결합도와 운영 복잡도가 높습니다.
 - sidecar 구조는 애플리케이션 로직과 직접 결합하지 않더라도 HPA 시점 자원 경합과 성능 저하 요인이 됩니다.
 - 우선 Cilium + Hubble로 네트워크 가시성과 운영 단순화 가능성을 확인하고, 필요 시 더 나은 대안을 후속 비교합니다.
+- 비교 우선순위는 `Cilium full replacement + Ingress`, `Cilium full replacement + Gateway API`, `Calico 유지 + Cilium chaining + Hubble` 순으로 둡니다.
 
 ## 포함 범위
 

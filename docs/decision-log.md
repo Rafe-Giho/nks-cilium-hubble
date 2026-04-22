@@ -12,3 +12,5 @@
 | D-004 | 2026-04-16 | 검증 방식 | 실제 업무 앱 대신 샘플 워크로드 기반으로 가시성 검증 수행 | 현재 준비 가능한 자산 기준 | 샘플 manifest 필요 | confirmed |
 | D-005 | 2026-04-22 | 비지원 PoC 수용 | NKS 공식 문서상 cluster CNI 변경 기능은 비지원 상태이므로, 이번 작업은 운영 적용이 아닌 기능 검증 PoC로 진행 | NHN Cloud NKS 릴리스 노트 | 실패 시 운영 롤백이 아닌 PoC 클러스터 재생성을 기본 복구 경로로 둠 | confirmed |
 | D-006 | 2026-04-22 | 성공 판단 기준 | Hubble 가시성뿐 아니라 샘플 워크로드 기준 성능/운영 단순화 지표도 수집 | sidecar 오버헤드 대안 검토 목적 | 결과 검토 시 기능/성능/운영성 항목을 분리 평가 | confirmed |
+| D-007 | 2026-04-22 | 클러스터 접근 원칙 | 클러스터에는 직접 변경을 하지 않고 read-only 정보 수집만 수행 | 사용자 요청 | 이후 조사 단계는 조회 중심으로 진행 | confirmed |
+| D-008 | 2026-04-22 | 구현 우선순위 | 1순위 Cilium full replacement + Ingress, 2순위 Gateway API, 3순위 Calico chaining, 추가 후보 Pixie/Beyla | 사용자 요청 | 이후 가이드 구조와 비교 기준 반영 | confirmed |
