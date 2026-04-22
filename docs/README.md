@@ -7,6 +7,13 @@
 - `project-scope.md`: 목표, 범위, 성공 기준, 제외 범위
 - `environment-inventory.md`: 현재 NKS 환경과 제약사항
 - `execution-plan.md`: 단계별 수행 계획과 게이트
+- `install-runbook.md`: Cilium, Hubble, UI, Ingress 설치/접속 가이드
+- `ingress-vs-gateway-api.md`: Cilium Ingress와 Gateway API 비교
+- `cilium-ingress-guide.md`: Cilium Ingress 구현 가이드
+- `cilium-gateway-api-guide.md`: Cilium Gateway API 구현 가이드
+- `cilium-calico-chaining-guide.md`: Calico 유지 + Cilium chaining + Hubble 가이드
+- `pixie-guide.md`: Pixie 기반 sidecar-less 관측 가이드
+- `grafana-beyla-guide.md`: Grafana Beyla 기반 sidecar-less 관측 가이드
 - `poc-scenarios.md`: 샘플 워크로드와 관측 시나리오
 - `decision-log.md`: 주요 판단과 근거
 - `validation-checklist.md`: 변경 전후 확인 항목
