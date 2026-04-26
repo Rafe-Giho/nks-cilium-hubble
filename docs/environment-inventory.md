@@ -49,10 +49,29 @@
 | Pod CIDR | Node spec과 Calico IPPool CRD에서 직접 확인 불가. 관측된 Pod IP는 `10.100.184.0/24`, `10.100.188.0/24` 대역 |
 | Service CIDR | API server flag로 직접 확인 불가. 관측된 Service IP는 `10.254.0.1`, `10.254.0.10`, `10.254.x.x` 대역 |
 
+## 보안그룹 현황
+
+사용자가 NKS 콘솔에서 확인한 기본 Calico worker 보안그룹 기준입니다.
+
+| 항목 | 값 | Cilium PoC 판단 |
+| --- | --- | --- |
+| worker self TCP 수신 | `TCP 1-65535` from worker security group | Cilium health `4240`, Hubble `4244`, metrics TCP port 포함 |
+| worker self UDP 수신 | `UDP 1-65535` from worker security group | Cilium VXLAN 기본 `8472` 포함 |
+| worker IPv4 송신 | 임의 포트 to `0.0.0.0/0` | worker 간/외부 송신 충족 예상 |
+| Calico VXLAN | `UDP 4789` | 기존 NKS Calico용. PoC 중 유지 |
+| Calico Typha | `TCP 5473` | 기존 NKS Calico용. PoC 중 유지 |
+| NodePort | 수신 `TCP 30000-32767` from `0.0.0.0/0` | NKS Service/LoadBalancer 동작 확인 전 유지 |
+
+결론:
+
+- 현재 보안그룹이 그대로 유지되면 Cilium 기본 VXLAN `UDP 8472`와 Hubble `TCP 4244`를 위해 별도 규칙 추가는 필요하지 않은 것으로 판단합니다.
+- Track A에서는 Cilium VXLAN 기본 `8472`를 사용합니다.
+- Calico/NKS control plane 관련 보안그룹 규칙은 PoC 중 삭제하지 않습니다.
+
 ## 확인 필요 사항
 
 - Pod CIDR과 Service CIDR의 공식 값: `kubectl` 조회만으로 확정 불가. NKS 콘솔 또는 생성 파라미터 확인 필요
-- 보안그룹: Hubble Relay용 노드 간 `TCP 4244` 허용 여부 확인 필요
+- 보안그룹: 현재 NKS worker self `TCP/UDP 1-65535`가 유지되면 Cilium 기본 포트는 충족 예상. 하드닝 시 `docs/06-nks-security-group.md` 기준으로 재검토 필요
 - LoadBalancer: Cilium Ingress 또는 샘플 `Service type LoadBalancer`로 실제 생성 가능 여부 확인 필요
 - 커널 또는 eBPF 관련 제약: 현재 노드 커널은 `6.8.0-88-generic`, Calico는 `v3.30.2`
 - 보안 정책 또는 승인 절차: PoC 기준 미정

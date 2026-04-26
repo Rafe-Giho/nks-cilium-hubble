@@ -32,6 +32,23 @@
   - 최신 NKS Kubernetes 버전과 기술적 호환 가능성은 있습니다.
   - 단, NKS 관리형 제약은 별도로 남습니다.
 
+## Cilium 단일 CNI와 신규 노드 주의사항
+
+- 출처: https://docs.cilium.io/en/stable/installation/taints/
+- 확인 날짜: 2026-04-22
+- 핵심 사항
+  - Cilium이 지원되지 않는 단일 CNI 환경에서는 cloud provider가 재부팅, 업데이트, 유지보수 중 CNI 설정을 되돌릴 수 있습니다.
+  - Cilium이 뜨기 전에 Pod가 먼저 시작되면 기존 CNI로 IP를 받을 수 있습니다.
+  - Cilium은 `node.cilium.io/agent-not-ready` taint를 이용해 Cilium 준비 전 Pod 실행을 막는 방식을 안내합니다.
+  - Cilium Helm에는 `agentNotReadyTaintKey` 값이 있으며, Cilium agent toleration은 기본적으로 taint가 있는 노드에도 스케줄될 수 있도록 구성됩니다.
+  - Cluster Autoscaler가 taint를 무시해야 하는 경우 `ignore-taint.cluster-autoscaler.kubernetes.io/`로 시작하는 key 사용을 안내합니다.
+  - Cilium 문서는 지원되지 않는 단일 CNI 환경에서 이미 스케줄된 Pod가 Cilium보다 먼저 실행되는 문제를 줄이기 위해 `NoExecute` effect를 권장합니다.
+- 판단
+  - NKS에서 Cilium full replacement를 검증하려면 신규 node scale-out 시에도 Cilium이 CNI 소유권을 가져가는지 별도 검증해야 합니다.
+  - node group 수준 taint 또는 동등 자동화 없이는 scale-out 자동 안정성을 보장하지 않습니다.
+  - NKS node group taint key와 Cilium `agentNotReadyTaintKey`가 일치해야 자동화 흐름이 성립합니다.
+  - 기존 노드는 최초 1회 node-by-node migration이 필요하며, 신규 노드는 node group taint와 Cilium taint 제거 동작이 함께 확인되어야 자동화된 것으로 판단할 수 있습니다.
+
 ## Hubble 요구사항
 
 - 출처: https://docs.cilium.io/en/stable/observability/hubble/setup/
@@ -40,6 +57,44 @@
   - Hubble Relay를 위해 모든 Cilium 노드에서 `TCP 4244`가 필요합니다.
 - 판단
   - 보안그룹 또는 노드 간 통신 경로 검토가 선행되어야 합니다.
+
+## CNI 보안그룹 포트
+
+- 출처:
+  - https://docs.tigera.io/calico/latest/getting-started/kubernetes/requirements
+  - https://docs.tigera.io/calico/latest/reference/felix/configuration
+  - https://docs.cilium.io/en/stable/operations/system_requirements/
+- 확인 날짜: 2026-04-22
+- 핵심 사항
+  - Calico VXLAN은 `UDP 4789`를 사용합니다.
+  - Cilium VXLAN tunnel mode는 기본적으로 `UDP 8472`를 사용합니다.
+  - Cilium health는 노드 간 `TCP 4240`과 ICMP를 사용할 수 있습니다.
+  - Hubble server는 `TCP 4244`를 사용합니다.
+- 판단
+  - 사용자가 제공한 NKS 기본 worker 보안그룹에는 worker self 원격 `TCP 1-65535`, `UDP 1-65535` 수신 허용이 있어 Cilium 기본 포트가 포함됩니다.
+  - 따라서 현재 보안그룹을 유지한다면 Cilium VXLAN/Hubble 용도의 추가 규칙은 필요하지 않은 것으로 봅니다.
+  - Track A는 Cilium VXLAN 기본 `8472`를 사용합니다.
+  - NKS 관리형 Calico 관련 규칙은 PoC 중 삭제하지 않습니다.
+
+## Hubble 모니터링 방식
+
+- 출처:
+  - https://docs.cilium.io/en/stable/observability/hubble/hubble-ui/
+  - https://docs.cilium.io/en/stable/observability/grafana/
+  - https://docs.cilium.io/en/stable/observability/metrics/
+  - https://docs.cilium.io/en/stable/observability/hubble/configuration/export/
+- 확인 날짜: 2026-04-22
+- 핵심 사항
+  - Hubble UI 공식 접근 방식은 `cilium hubble ui` 기반 port-forward입니다.
+  - Cilium 예제 Prometheus/Grafana는 Cilium과 Hubble metrics를 자동 scrape하는 구성을 제공합니다.
+  - Hubble metrics는 `hubble.metrics.enabled`로 활성화하며 Prometheus/Grafana에서 `hubble_` 계열 지표로 조회합니다.
+  - Cilium/Hubble/Cilium Operator metrics 활성화 시 기본 scrape port는 각각 `9962`, `9965`, `9963`입니다.
+  - Hubble exporter는 flow를 파일 또는 stdout으로 내보내 로그 수집기가 소비할 수 있습니다.
+- 판단
+  - PoC 기본 접근은 Hubble UI/CLI port-forward가 가장 안전합니다.
+  - 운영형 상시 모니터링은 Hubble UI보다 Prometheus/Grafana metrics가 적합합니다.
+  - 개별 flow 장기 검색과 감사는 Hubble exporter와 로그 플랫폼 연계를 별도 검토해야 합니다.
+  - Hubble UI를 웹으로 공유할 경우 공인 무방비 노출이 아니라 내부 Ingress, TLS, 접근 제한을 전제로 해야 합니다.
 
 ## Cilium Ingress 특성
 

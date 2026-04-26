@@ -159,6 +159,8 @@ UI:
 cilium hubble ui
 ```
 
+운영형 metrics, Grafana, exporter 검토가 필요하면 Cilium 설치 후 `docs/15-hubble-network-monitoring.md`를 기준으로 별도 선택합니다.
+
 ## 성공 기준
 
 - Calico 기존 네트워킹 유지

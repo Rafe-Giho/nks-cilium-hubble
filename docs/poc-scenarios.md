@@ -38,6 +38,7 @@
 - Node CPU/메모리 사용량
 - HPA 적용 시 scale-out 이벤트와 Hubble flow 변화
 - 설치/점검 단계 수와 장애 확인 지점 수
+- 운영형 모니터링 선택 시 Hubble metrics scrape 가능 여부와 exporter 로그 생성 여부
 
 ## 후속 비교 시나리오
 

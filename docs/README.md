@@ -1,5 +1,9 @@
 # docs
 
+- 목적: 프로젝트에서 직접 작성하고 유지보수하는 문서 목록과 작성 규칙을 관리합니다.
+- 상태: draft
+- 마지막 갱신: 2026-04-22
+
 직접 작성하고 유지보수하는 프로젝트 문서를 관리합니다.
 
 ## 표준 문서
@@ -9,7 +13,9 @@
 - `execution-plan.md`: 단계별 수행 계획과 게이트
 - `00-install-runbook.md`: Cilium, Hubble, UI, Ingress 설치/접속 가이드 인덱스
 - `05-ingress-vs-gateway-api.md`: Cilium Ingress와 Gateway API 비교
+- `06-nks-security-group.md`: NKS 기본 보안그룹과 Cilium 필요 포트 확인
 - `10-track-a-full-replacement-ingress.md`: 1순위 Cilium full replacement + Ingress + Hubble 가이드
+- `15-hubble-network-monitoring.md`: Hubble UI/CLI, Grafana metrics, exporter 기반 모니터링 가이드
 - `20-track-b-full-replacement-gateway-api.md`: 2순위 Cilium full replacement + Gateway API + Hubble 가이드
 - `30-track-c-calico-chaining-hubble.md`: 3순위 Calico 유지 + Cilium chaining + Hubble 가이드
 - `40-option-pixie.md`: Pixie 기반 sidecar-less 관측 가이드
@@ -31,3 +37,5 @@
 - 설계 변경이나 방향 전환이 생기면 `decision-log.md`를 먼저 갱신합니다.
 - 환경 사실이 바뀌면 `environment-inventory.md`를 우선 수정합니다.
 - 실제 적용 절차를 만들기 전 `execution-plan.md`와 `validation-checklist.md`를 먼저 채웁니다.
+- 번호형 실행 가이드가 추가/변경되면 `00-install-runbook.md`와 이 README를 함께 갱신합니다.
+- Hubble 모니터링 범위가 바뀌면 `15-hubble-network-monitoring.md`, `validation-checklist.md`, `reference/source-tracking.md`를 함께 맞춥니다.

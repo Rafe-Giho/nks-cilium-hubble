@@ -17,7 +17,8 @@
 - 기존 운영 경험상 서비스메쉬와 Jaeger 기반 구조는 결합도와 운영 복잡도가 높습니다.
 - sidecar 구조는 애플리케이션 로직과 직접 결합하지 않더라도 HPA 시점 자원 경합과 성능 저하 요인이 됩니다.
 - 우선 Cilium + Hubble로 네트워크 가시성과 운영 단순화 가능성을 확인하고, 필요 시 더 나은 대안을 후속 비교합니다.
-- 비교 우선순위는 `Cilium full replacement + Ingress`, `Cilium full replacement + Gateway API`, `Calico 유지 + Cilium chaining + Hubble` 순으로 둡니다.
+- 비교 우선순위는 Track A `Cilium full replacement + Ingress`, Track B `Cilium full replacement + Gateway API`, Track C `Calico 유지 + Cilium chaining + Hubble` 순으로 둡니다.
+- Hubble 모니터링은 PoC 단계의 UI/CLI와 운영형 metrics/exporter를 구분해서 검증합니다.
 
 ## 포함 범위
 
@@ -25,6 +26,7 @@
 - Cilium 설치 방식 선정
 - Cilium Ingress 구성 방식 선정
 - Hubble Relay/UI/CLI 구성 방식 선정
+- Hubble metrics, Grafana, exporter 기반 운영형 모니터링 후보 정리
 - 샘플 워크로드 기반 검증 항목과 롤백 포인트 정의
 
 ## 제외 범위
@@ -58,6 +60,7 @@
 
 - 기능: Cilium CNI, Cilium Ingress, Hubble Relay/UI/CLI 정상 기동 여부
 - 가시성: DNS, Pod-to-Pod, Service, Ingress 흐름 식별 가능 여부
+- 모니터링: Hubble UI/CLI 즉시 진단과 Hubble metrics/exporter 기반 운영형 확장 가능성
 - 성능: 샘플 HTTP 요청의 p50/p95 지연, Pod/Node CPU 및 메모리 사용량
 - 확장성: 샘플 HPA 적용 시 scale-out 이벤트와 Hubble 관측 가능 여부
 - 운영 단순성: sidecar 없는 구성에서 필요한 컴포넌트 수, 설치 단계, 장애 확인 지점
@@ -65,4 +68,6 @@
 ## 오픈 이슈
 
 - NKS 릴리스 노트 기준 CNI 변경 기능이 비지원 상태이므로 실제 적용 안정성 검증이 필요합니다.
-- 노드 수, flavor, 퍼블릭/프라이빗 여부는 아직 확정되지 않았습니다.
+- Pod CIDR과 Service CIDR의 공식 값은 NKS 콘솔 또는 생성 파라미터 확인이 필요합니다.
+- Cilium VXLAN `UDP 8472`, Hubble Relay용 노드 간 `TCP 4244`, NKS LoadBalancer 동작은 실제 보안그룹/샘플 리소스로 검증해야 합니다.
+- 신규 node scale-out 시 node group 기본 taint를 자동 적용할 수 있는지 확인이 필요합니다.

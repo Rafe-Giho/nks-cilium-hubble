@@ -1,5 +1,9 @@
 # manifests
 
+- 목적: Helm values, Kubernetes YAML, 샘플 설정의 저장 규칙을 관리합니다.
+- 상태: draft
+- 마지막 갱신: 2026-04-22
+
 실제 적용 자산을 관리합니다.
 
 ## 저장 규칙

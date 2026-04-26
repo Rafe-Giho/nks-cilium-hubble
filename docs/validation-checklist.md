@@ -11,7 +11,11 @@
 | PoC 클러스터 재생성 기준 확인 | 실패 시 복구 경로 명확 | `[입력 필요]` |
 | 클러스터가 생성 직후 기본 Calico 상태인지 확인 | 기준선 일치 | `[입력 필요]` |
 | worker node 수와 flavor 확인 | PoC 최소 조건 충족 | `[입력 필요]` |
-| Hubble Relay용 노드 간 4244/TCP 경로 검토 | Relay 통신 가능 | `[입력 필요]` |
+| NKS worker self TCP 전체 허용 확인 | `TCP 1-65535` from worker security group 유지 | 사용자 제공 기준 충족 |
+| NKS worker self UDP 전체 허용 확인 | `UDP 1-65535` from worker security group 유지 | 사용자 제공 기준 충족 |
+| Cilium VXLAN용 노드 간 8472/UDP 경로 검토 | Cilium tunnel 통신 가능 | 사용자 제공 기준 충족 예상 |
+| Hubble Relay용 노드 간 4244/TCP 경로 검토 | Relay 통신 가능 | 사용자 제공 기준 충족 예상 |
+| Cilium health용 4240/TCP와 ICMP 검토 | health 확인 가능 | TCP 충족 예상, ICMP 확인 필요 |
 | 샘플 워크로드/Ingress 검증 자산 준비 | 테스트 가능 | `[입력 필요]` |
 | 성능/운영 단순화 측정 항목 준비 | 성공 판단 가능 | `[입력 필요]` |
 
@@ -34,6 +38,8 @@
 | Hubble CLI 접근 가능 | Relay 연동 가능 | `[입력 필요]` |
 | DNS, Pod-to-Pod, Service 흐름 조회 가능 | 요구 가시성 확보 | `[입력 필요]` |
 | 네임스페이스 또는 라벨 기준 필터링 가능 | 운영 확인 가능 | `[입력 필요]` |
+| Hubble metrics 활성화 여부 판단 | 운영형 모니터링 범위 결정 | `[입력 필요]` |
+| Hubble exporter 사용 여부 판단 | 장기 flow 검색/감사 범위 결정 | `[입력 필요]` |
 
 ## Ingress 확인
 
@@ -62,6 +68,7 @@
 | Cilium/Hubble/Ingress Pod CPU/메모리 수집 | 관측 구성 오버헤드 확인 | `[입력 필요]` |
 | HPA scale-out 이벤트 관측 | 확장 시점 흐름 확인 | `[입력 필요]` |
 | 설치/점검 단계 수 기록 | 운영 단순화 판단 근거 확보 | `[입력 필요]` |
+| Hubble metrics 또는 exporter 선택 결과 기록 | PoC/운영 모니터링 경계 명확화 | `[입력 필요]` |
 
 ## 롤백 조건
 

@@ -10,6 +10,8 @@
 
 NKS 릴리스 노트 기준 cluster CNI change는 비지원 상태이므로, 모든 full replacement 절차는 운영 전환 절차가 아니라 `unsupported PoC` 절차로 취급합니다.
 
+Track A의 scale-out 자동화 전제는 `NKS node group 기본 taint`와 `Cilium agentNotReadyTaintKey`를 일치시키는 것입니다. 신규 노드는 Cilium이 준비될 때까지 일반 Pod를 받지 않고, Cilium agent가 준비 후 taint를 제거해야 자동화된 것으로 판단합니다.
+
 ## 실행 원칙
 
 - 클러스터 변경 명령은 사용자가 직접 실행합니다.
@@ -24,7 +26,9 @@ NKS 릴리스 노트 기준 cluster CNI change는 비지원 상태이므로, 모
 | --- | --- | --- |
 | 00 | `docs/00-install-runbook.md` | 전체 인덱스 |
 | 05 | `docs/05-ingress-vs-gateway-api.md` | Ingress/Gateway API 선택 기준 |
+| 06 | `docs/06-nks-security-group.md` | NKS 기본 보안그룹과 Cilium 필요 포트 확인 |
 | 10 | `docs/10-track-a-full-replacement-ingress.md` | 1순위 기본안: Cilium full replacement + Ingress + Hubble |
+| 15 | `docs/15-hubble-network-monitoring.md` | Hubble UI/CLI, Grafana metrics, exporter 기반 모니터링 가이드 |
 | 20 | `docs/20-track-b-full-replacement-gateway-api.md` | 2순위: Cilium full replacement + Gateway API + Hubble |
 | 30 | `docs/30-track-c-calico-chaining-hubble.md` | 3순위: Calico 유지 + Cilium chaining + Hubble |
 | 40 | `docs/40-option-pixie.md` | 추가 후보: Pixie |
@@ -93,9 +97,11 @@ hubble version
 
 1. `docs/environment-inventory.md`에서 확인 불가 항목을 확인합니다.
 2. `docs/05-ingress-vs-gateway-api.md`로 Ingress/Gateway API 차이를 확인합니다.
-3. 기본안이면 `docs/10-track-a-full-replacement-ingress.md`를 처음부터 실행합니다.
-4. Gateway API를 보려면 `docs/20-track-b-full-replacement-gateway-api.md`를 실행합니다.
-5. full replacement 리스크가 높다고 판단하면 `docs/30-track-c-calico-chaining-hubble.md`를 검토합니다.
+3. `docs/06-nks-security-group.md`로 NKS 보안그룹이 Cilium 기본 포트를 포함하는지 확인합니다.
+4. 기본안이면 `docs/10-track-a-full-replacement-ingress.md`를 처음부터 실행합니다.
+5. Hubble을 모니터링 용도로 확장하려면 `docs/15-hubble-network-monitoring.md`를 확인합니다.
+6. Gateway API를 보려면 `docs/20-track-b-full-replacement-gateway-api.md`를 실행합니다.
+7. full replacement 리스크가 높다고 판단하면 `docs/30-track-c-calico-chaining-hubble.md`를 검토합니다.
 
 ## 설치 전 반드시 확인할 값
 
@@ -103,7 +109,10 @@ hubble version
 | --- | --- | --- |
 | 새 Cilium Pod CIDR | 미확정 | 기존 Pod/Service/Node/VPC CIDR과 겹치지 않는 CIDR 확정 |
 | Service CIDR 공식값 | 미확정 | NKS 콘솔 또는 생성 파라미터에서 확인 |
-| Hubble Relay `TCP 4244` | 미확정 | 노드 간 보안그룹 허용 확인 |
+| Cilium VXLAN `UDP 8472` | 충족 예상 | 현재 NKS worker self `UDP 1-65535` 유지 확인 |
+| Hubble Relay `TCP 4244` | 충족 예상 | 현재 NKS worker self `TCP 1-65535` 유지 확인 |
+| Cilium health `TCP 4240`/ICMP | 일부 충족 예상 | `TCP 4240`은 worker self TCP 전체로 충족, ICMP는 필요 시 추가 검토 |
+| NKS node group 기본 taint | 미확정 | `node.cilium.io/agent-not-ready=true:NoExecute` 적용 가능 여부 확인 |
 | NKS LoadBalancer 생성 | 미검증 | 샘플 Service/Ingress로 확인 |
 | rollback | PoC 클러스터 재생성 | 실행 전 합의 |
 
@@ -111,6 +120,11 @@ hubble version
 
 - Cilium Helm 설치: https://docs.cilium.io/en/stable/installation/k8s-install-helm/
 - Cilium migration: https://docs.cilium.io/en/stable/installation/k8s-install-migration/
+- Cilium firewall rules: https://docs.cilium.io/en/stable/operations/system_requirements/
+- Calico network requirements: https://docs.tigera.io/calico/latest/getting-started/kubernetes/requirements
 - Cilium Ingress: https://docs.cilium.io/en/stable/network/servicemesh/ingress/
 - Cilium Gateway API: https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/
 - Hubble: https://docs.cilium.io/en/stable/observability/hubble/setup/
+- Hubble UI: https://docs.cilium.io/en/stable/observability/hubble/hubble-ui/
+- Hubble metrics/Grafana: https://docs.cilium.io/en/stable/observability/grafana/
+- Hubble exporter: https://docs.cilium.io/en/stable/observability/hubble/configuration/export/

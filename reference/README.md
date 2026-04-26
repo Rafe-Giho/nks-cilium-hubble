@@ -1,5 +1,9 @@
 # reference
 
+- 목적: 공식 문서 근거, 제약사항, 버전 호환성 메모의 위치와 기록 규칙을 관리합니다.
+- 상태: draft
+- 마지막 갱신: 2026-04-22
+
 외부 자료를 기반으로 한 요약, 제약사항, 버전 호환성 메모를 관리합니다.
 
 ## 우선 관리 문서
@@ -24,6 +28,8 @@
 
 - NKS에서 기본 CNI 대체 가능 여부와 지원 범위
 - NKS Kubernetes 버전과 Cilium 지원 매트릭스
-- Hubble Relay/UI 구성 요구사항
+- Hubble Relay/UI/CLI 구성 요구사항
+- Hubble metrics, Grafana, exporter 기반 운영형 모니터링 요구사항
+- Cilium/Hubble/Calico node 간 필요 포트와 NKS worker 보안그룹 충족 여부
 - NetworkPolicy, LoadBalancer, egress 관련 제약
 - Calico 제거 또는 공존 시 주의사항
