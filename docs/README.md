@@ -2,7 +2,7 @@
 
 - 목적: 프로젝트에서 직접 작성하고 유지보수하는 문서 목록과 작성 규칙을 관리합니다.
 - 상태: draft
-- 마지막 갱신: 2026-04-22
+- 마지막 갱신: 2026-05-06
 
 직접 작성하고 유지보수하는 프로젝트 문서를 관리합니다.
 
@@ -14,10 +14,11 @@
 - `00-install-runbook.md`: Cilium, Hubble, UI, Ingress 설치/접속 가이드 인덱스
 - `05-ingress-vs-gateway-api.md`: Cilium Ingress와 Gateway API 비교
 - `06-nks-security-group.md`: NKS 기본 보안그룹과 Cilium 필요 포트 확인
-- `10-track-a-full-replacement-ingress.md`: 1순위 Cilium full replacement + Ingress + Hubble 가이드
+- `10-full-replacement-execution-record.md`: NKS Cilium full replacement 실행 기록 아카이브
+- `11-full-replacement-assets-archive.md`: NKS Cilium full replacement manifest/script 자산 아카이브
 - `15-hubble-network-monitoring.md`: Hubble UI/CLI, Grafana metrics, exporter 기반 모니터링 가이드
-- `20-track-b-full-replacement-gateway-api.md`: 2순위 Cilium full replacement + Gateway API + Hubble 가이드
-- `30-track-c-calico-chaining-hubble.md`: 3순위 Calico 유지 + Cilium chaining + Hubble 가이드
+- `16-observability-architecture-concepts.md`: Calico chaining, Cilium, Hubble, Grafana, exporter 개념과 연계 구조
+- `30-track-c-calico-chaining-hubble.md`: Calico 유지 + Cilium chaining + Hubble 실행 가이드
 - `40-option-pixie.md`: Pixie 기반 sidecar-less 관측 가이드
 - `50-option-grafana-beyla.md`: Grafana Beyla 기반 sidecar-less 관측 가이드
 - `poc-scenarios.md`: 샘플 워크로드와 관측 시나리오

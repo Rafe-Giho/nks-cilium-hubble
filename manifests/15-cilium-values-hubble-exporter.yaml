@@ -1,0 +1,68 @@
+cluster:
+  name: ta-sgh-vxlan-sidecarless-cls
+cni:
+  chainingMode: generic-veth
+  confPath: /etc/cni/net.d/calico
+  configMap: cni-configuration
+  customConf: true
+  exclusive: false
+dashboards:
+  enabled: true
+  label: grafana_dashboard
+  labelValue: "1"
+enableIPv4Masquerade: false
+enableIdentityMark: false
+envoy:
+  prometheus:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+hubble:
+  enabled: true
+  export:
+    fileCompress: true
+    fileMaxBackups: 10
+    fileMaxSizeMb: 100
+    static:
+      enabled: true
+      filePath: /var/run/cilium/hubble/events.log
+  metrics:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      labelValue: "1"
+    enableOpenMetrics: true
+    enabled:
+    - dns:query;ignoreAAAA
+    - drop
+    - tcp
+    - flow
+    - port-distribution
+    - icmp
+    - httpV2:exemplars=true;labelsContext=source_ip,source_namespace,source_workload,destination_ip,destination_namespace,destination_workload,traffic_direction
+    serviceMonitor:
+      enabled: true
+  relay:
+    enabled: true
+  ui:
+    enabled: true
+k8sServiceHost: 3103cceb-nks-kr1.container.nhncloud.com
+k8sServicePort: 6443
+kubeProxyReplacement: "false"
+operator:
+  dashboards:
+    enabled: true
+    label: grafana_dashboard
+    labelValue: "1"
+  prometheus:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+  replicas: 1
+prometheus:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    trustCRDsExist: true
+routingMode: native
+

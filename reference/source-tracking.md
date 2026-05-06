@@ -2,7 +2,7 @@
 
 - 목적: 공식 문서와 확인 시점을 한곳에서 추적합니다.
 - 상태: draft
-- 마지막 갱신: 2026-04-22
+- 마지막 갱신: 2026-05-06
 
 | ID | 영역 | 출처 | 확인 날짜 | 버전/문서 시점 | 핵심 요약 | 영향 |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -20,3 +20,4 @@
 | R-012 | Hubble exporter | https://docs.cilium.io/en/stable/observability/hubble/configuration/export/ | 2026-04-22 | stable docs | Hubble exporter는 flow를 파일 또는 stdout으로 내보내 로그 수집기가 소비할 수 있음 | 장기 검색/감사용 flow 로그 수집 후보 |
 | R-013 | Calico 기본 네트워크 포트 | https://docs.tigera.io/calico/latest/getting-started/kubernetes/requirements | 2026-04-22 | latest docs | Calico VXLAN은 UDP 4789, Typha는 TCP 5473 사용 | NKS 기본 Calico 보안그룹 해석 기준 |
 | R-014 | Cilium firewall rules | https://docs.cilium.io/en/stable/operations/system_requirements/ | 2026-04-22 | stable docs | Cilium VXLAN 기본 UDP 8472, health TCP 4240/ICMP, Hubble TCP 4244 필요 | NKS worker 보안그룹 추가/수정/삭제 판단 기준 |
+| R-015 | Track C 관측 아키텍처 | https://docs.cilium.io/en/stable/installation/cni-chaining-generic-veth/ ; https://docs.cilium.io/en/stable/observability/metrics/ ; https://docs.cilium.io/en/stable/observability/hubble/configuration/export/ ; https://docs.tigera.io/calico/latest/networking/configuring/vxlan-ipip ; https://prometheus-operator.dev/docs/getting-started/introduction/ | 2026-05-06 | Cilium 1.19.x stable, Calico latest, Prometheus Operator docs | generic-veth chaining은 veth 기반 CNI 위에 Cilium을 붙이는 방식이며, Hubble metrics는 Prometheus/Grafana 시계열 관측, exporter는 flow 로그 출력에 사용됨. Prometheus Operator는 ServiceMonitor 기반 scrape 관리를 제공함. | `docs/16-observability-architecture-concepts.md` 이론 정리 근거 |

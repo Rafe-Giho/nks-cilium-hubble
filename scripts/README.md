@@ -6,6 +6,12 @@
 
 반복 작업 자동화를 위한 스크립트를 관리합니다.
 
+## 현재 스크립트
+
+현재 재사용 가능한 스크립트는 없습니다.
+
+삭제한 Cilium full replacement 실험 스크립트는 `docs/11-full-replacement-assets-archive.md`에 요약 보존합니다.
+
 ## 작성 규칙
 
 - 가능한 한 멱등적으로 작성합니다.

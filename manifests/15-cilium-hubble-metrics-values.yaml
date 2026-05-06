@@ -1,0 +1,64 @@
+cluster:
+  name: ta-sgh-vxlan-sidecarless-cls
+
+cni:
+  chainingMode: generic-veth
+  customConf: true
+  configMap: cni-configuration
+  confPath: /etc/cni/net.d/calico
+  exclusive: false
+
+routingMode: native
+kubeProxyReplacement: "false"
+enableIPv4Masquerade: false
+enableIdentityMark: false
+
+prometheus:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    trustCRDsExist: true
+
+operator:
+  prometheus:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+  dashboards:
+    enabled: true
+    label: grafana_dashboard
+    labelValue: "1"
+
+envoy:
+  prometheus:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+
+dashboards:
+  enabled: true
+  label: grafana_dashboard
+  labelValue: "1"
+
+hubble:
+  enabled: true
+  relay:
+    enabled: true
+  ui:
+    enabled: true
+  metrics:
+    enableOpenMetrics: true
+    enabled:
+      - dns:query;ignoreAAAA
+      - drop
+      - tcp
+      - flow
+      - port-distribution
+      - icmp
+      - "httpV2:exemplars=true;labelsContext=source_ip,source_namespace,source_workload,destination_ip,destination_namespace,destination_workload,traffic_direction"
+    serviceMonitor:
+      enabled: true
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      labelValue: "1"
