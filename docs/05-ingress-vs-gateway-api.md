@@ -2,11 +2,13 @@
 
 - 목적: Cilium Ingress와 Cilium Gateway API를 현재 PoC 관점에서 비교하고 선택 기준을 정리합니다.
 - 상태: draft
-- 마지막 갱신: 2026-04-22
+- 마지막 갱신: 2026-04-30
 
 ## 결론
 
-현재 기본안은 `Cilium Ingress`입니다.
+이 문서는 Cilium full replacement 검토 당시 작성한 Ingress/Gateway API 비교입니다.
+
+2026-04-30 기준 NKS Cilium full replacement는 실패로 종결했으므로, 이 비교는 현재 실행 가이드가 아니라 후속 재설계 참고 자료입니다.
 
 이유:
 
@@ -51,10 +53,10 @@ Gateway API를 선택할 조건:
 - 플랫폼 팀과 앱 팀 역할 분리를 고려함
 - 서비스메쉬 대체 방향까지 이어서 볼 예정
 
-## 실행 파일
+## 관련 파일
 
-- Ingress 기본안: `docs/10-track-a-full-replacement-ingress.md`
-- Gateway API 대안: `docs/20-track-b-full-replacement-gateway-api.md`
+- full replacement 실행 기록: `docs/10-full-replacement-execution-record.md`
+- full replacement 자산 보존: `docs/11-full-replacement-assets-archive.md`
 - 전체 인덱스: `docs/00-install-runbook.md`
 
 ## 참고 출처

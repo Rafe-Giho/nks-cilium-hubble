@@ -1,6 +1,6 @@
 # NKS Security Group Guide for Cilium
 
-- 목적: NKS 기본 Calico 보안그룹을 Cilium full replacement PoC 기준으로 평가하고 추가/수정/삭제 기준을 정리합니다.
+- 목적: NKS 기본 Calico 보안그룹을 Cilium full replacement PoC 당시 기준으로 평가하고 추가/수정/삭제 기준을 정리합니다.
 - 상태: draft
 - 마지막 갱신: 2026-04-22
 
@@ -56,9 +56,9 @@
 
 따라서 현재 상태에서는 Cilium 기본 VXLAN `UDP 8472`를 사용해도 별도 보안그룹 추가 없이 worker 간 overlay 통신이 가능해야 합니다.
 
-## Track A 적용 기준
+## Archived full replacement 적용 기준
 
-Track A에서는 Cilium VXLAN port를 기본값으로 둡니다.
+실패로 종결한 full replacement 실험에서는 Cilium VXLAN port를 기본값으로 뒀습니다.
 
 ```bash
 export CILIUM_TUNNEL_PORT="8472"
