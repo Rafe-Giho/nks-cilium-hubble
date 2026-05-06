@@ -371,15 +371,15 @@ SELF_HEAL_TEST=false bash scripts/verify-route-keeper.sh
 
 ## 삭제한 구문서와 대체 관계
 
-아래 문서들은 이 보존 문서와 `docs/10-full-replacement-execution-record.md`로 대체합니다.
+아래 문서들은 이 보존 문서와 `docs/90-full-replacement-execution-record.md`로 대체합니다.
 
 | 삭제 문서 | 대체 위치 |
 | --- | --- |
-| `docs/10-track-a-full-replacement-ingress.md` | `docs/10-full-replacement-execution-record.md` |
-| `docs/11-track-a-copy-paste-runbook.md` | `docs/10-full-replacement-execution-record.md` |
-| `docs/12-track-a-fresh-nks-pod-cidr-runbook.md` | `docs/10-full-replacement-execution-record.md` |
-| `docs/13-track-a-known-calico-blocks-route-keeper.md` | `docs/10-full-replacement-execution-record.md`, `docs/11-full-replacement-assets-archive.md` |
-| `docs/14-track-a-full-replacement-failure-report.md` | `docs/10-full-replacement-execution-record.md` |
+| `docs/10-track-a-full-replacement-ingress.md` | `docs/90-full-replacement-execution-record.md` |
+| `docs/11-track-a-copy-paste-runbook.md` | `docs/90-full-replacement-execution-record.md` |
+| `docs/12-track-a-fresh-nks-pod-cidr-runbook.md` | `docs/90-full-replacement-execution-record.md` |
+| `docs/13-track-a-known-calico-blocks-route-keeper.md` | `docs/90-full-replacement-execution-record.md`, `docs/91-full-replacement-assets-archive.md` |
+| `docs/14-track-a-full-replacement-failure-report.md` | `docs/90-full-replacement-execution-record.md` |
 | `docs/20-track-b-full-replacement-gateway-api.md` | 삭제. full replacement 전제 자체가 실패 |
 
 ## 주의

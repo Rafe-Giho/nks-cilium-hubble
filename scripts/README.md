@@ -2,7 +2,7 @@
 
 - 목적: 반복 작업 자동화 스크립트의 저장 규칙과 추가 기준을 관리합니다.
 - 상태: draft
-- 마지막 갱신: 2026-04-22
+- 마지막 갱신: 2026-05-06
 
 반복 작업 자동화를 위한 스크립트를 관리합니다.
 
@@ -10,7 +10,7 @@
 
 현재 재사용 가능한 스크립트는 없습니다.
 
-삭제한 Cilium full replacement 실험 스크립트는 `docs/11-full-replacement-assets-archive.md`에 요약 보존합니다.
+삭제한 Cilium full replacement 실험 스크립트는 `docs/91-full-replacement-assets-archive.md`에 요약 보존합니다.
 
 ## 작성 규칙
 

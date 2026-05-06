@@ -70,7 +70,7 @@
 | 항목 | 기대 결과 | 상태 |
 | --- | --- | --- |
 | kube-prometheus-stack values 검증 | Helm template 성공 | 통과: 로컬 template 검증 |
-| Cilium/Hubble metrics values 검증 | Track C chaining 유지 + ServiceMonitor/dashboard 렌더링 | 통과: 로컬 template 검증 |
+| Cilium/Hubble metrics values 검증 | 05번 chaining 설정 유지 + ServiceMonitor/dashboard 렌더링 | 통과: 로컬 template 검증 |
 | kube-prometheus-stack 설치 | `monitoring` namespace 주요 Pod Ready | `[입력 필요]` |
 | Cilium/Hubble metrics 적용 | `hubble-metrics` Service와 `ServiceMonitor` 생성 | `[입력 필요]` |
 | Prometheus target 확인 | Cilium/Hubble target `UP` | `[입력 필요]` |

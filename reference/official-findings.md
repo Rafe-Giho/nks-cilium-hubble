@@ -73,7 +73,7 @@
 - 판단
   - 사용자가 제공한 NKS 기본 worker 보안그룹에는 worker self 원격 `TCP 1-65535`, `UDP 1-65535` 수신 허용이 있어 Cilium 기본 포트가 포함됩니다.
   - 따라서 현재 보안그룹을 유지한다면 Cilium VXLAN/Hubble 용도의 추가 규칙은 필요하지 않은 것으로 봅니다.
-  - Track A는 Cilium VXLAN 기본 `8472`를 사용합니다.
+  - 실패로 종결한 full replacement 실험은 Cilium VXLAN 기본 `8472`를 사용했습니다.
   - NKS 관리형 Calico 관련 규칙은 PoC 중 삭제하지 않습니다.
 
 ## Hubble 모니터링 방식

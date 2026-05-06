@@ -515,7 +515,7 @@ artifacts/route-keeper-verify-20260430-140139/
 artifacts/route-keeper-verify-20260430-142823/
 ```
 
-원본 artifact 로그는 full replacement 실패 보고 내용과 핵심 명령을 이 문서와 `docs/11-full-replacement-assets-archive.md`에 옮긴 뒤 삭제했습니다. 위 목록은 실행 증적의 디렉터리명 기록입니다.
+원본 artifact 로그는 full replacement 실패 보고 내용과 핵심 명령을 이 문서와 `docs/91-full-replacement-assets-archive.md`에 옮긴 뒤 삭제했습니다. 위 목록은 실행 증적의 디렉터리명 기록입니다.
 
 ## 최종 결론
 

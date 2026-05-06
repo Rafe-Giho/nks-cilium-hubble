@@ -1,4 +1,4 @@
-# Track C. Calico 유지 + Cilium Chaining + Hubble
+# Calico 유지 + Cilium Chaining + Hubble 실행 가이드
 
 - 목적: NKS 기본 Calico VXLAN을 primary CNI로 유지한 상태에서 Cilium generic-veth chaining과 Hubble로 sidecar-less 네트워크 가시성을 검증합니다.
 - 상태: validated-basic
@@ -141,7 +141,7 @@ generic-veth 조건:
 
 적용 파일:
 
-- `manifests/30-cni-configuration.yaml`
+- `manifests/05-cni-configuration.yaml`
 
 핵심 차이:
 
@@ -153,7 +153,7 @@ generic-veth 조건:
 적용:
 
 ```bash
-kubectl apply -f manifests/30-cni-configuration.yaml
+kubectl apply -f manifests/05-cni-configuration.yaml
 kubectl -n kube-system get cm cni-configuration -o yaml
 ```
 
@@ -161,7 +161,7 @@ kubectl -n kube-system get cm cni-configuration -o yaml
 
 적용 파일:
 
-- `manifests/30-cilium-chaining-values.yaml`
+- `manifests/05-cilium-chaining-values.yaml`
 
 중요 설정:
 
@@ -194,7 +194,7 @@ hubble:
 helm upgrade --install cilium oci://quay.io/cilium/charts/cilium \
   --version "${CILIUM_VERSION}" \
   --namespace kube-system \
-  --values manifests/30-cilium-chaining-values.yaml
+  --values manifests/05-cilium-chaining-values.yaml
 ```
 
 확인:
@@ -318,7 +318,7 @@ UI 확인:
 cilium hubble ui
 ```
 
-UI도 동일하게 port-forward가 끊기면 재실행합니다. 운영형 metrics, Grafana, exporter 검토는 설치 성공 후 `docs/15-hubble-network-monitoring.md`에서 진행합니다.
+UI도 동일하게 port-forward가 끊기면 재실행합니다. 운영형 metrics, Grafana, exporter 검토는 설치 성공 후 `docs/06-hubble-observability-runbook.md`에서 진행합니다.
 
 ## 5-1. 현재 검증 결과
 
@@ -397,7 +397,7 @@ kubectl get --raw /apis/metrics.k8s.io/v1beta1
 - Cilium Ingress/Gateway API 검증 목적이 아님
 - L7 Policy, IPsec Transparent Encryption 등 일부 Cilium 기능 제한 가능
 - 기존 Pod는 재시작 전까지 Cilium chaining 적용 대상이 아님
-- NKS 관리형 Calico 설정 변경 시 `30-cni-configuration.yaml` 재검토 필요
+- NKS 관리형 Calico 설정 변경 시 `05-cni-configuration.yaml` 재검토 필요
 
 ## 참고 출처
 

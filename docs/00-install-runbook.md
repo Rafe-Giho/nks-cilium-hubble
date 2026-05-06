@@ -1,4 +1,4 @@
-# 설치 런북 인덱스
+# NKS Cilium PoC 문서 인덱스
 
 - 목적: sidecar-less 트래픽 모니터링 PoC의 실행 순서와 각 가이드 진입점을 고정합니다.
 - 상태: draft
@@ -10,7 +10,7 @@
 
 NKS 릴리스 노트 기준 cluster CNI change는 비지원 상태이며, 실제 실험에서도 Calico VXLAN 호환 경로 없이는 control-plane-to-pod 경로가 정상화되지 않았습니다.
 
-현재 `10`, `11` 문서는 full replacement 실패 기록 보존용입니다. 후속 실행 가이드는 Calico 유지 기반 chaining, Pixie, Beyla, Calico-eBPF 방향으로 재설계합니다.
+현재 `90`, `91` 문서는 full replacement 실패 기록 보존용입니다. 후속 실행 가이드는 Calico 유지 기반 chaining, Pixie, Beyla, Calico-eBPF 방향으로 재설계합니다.
 
 ## 실행 원칙
 
@@ -26,19 +26,20 @@ NKS 릴리스 노트 기준 cluster CNI change는 비지원 상태이며, 실제
 | 순서 | 파일 | 용도 |
 | --- | --- | --- |
 | 00 | `docs/00-install-runbook.md` | 전체 인덱스 |
-| 05 | `docs/05-ingress-vs-gateway-api.md` | Ingress/Gateway API 참고 자료 |
-| 06 | `docs/06-nks-security-group.md` | NKS 기본 보안그룹과 Cilium/Hubble 필요 포트 확인 |
-| 10 | `docs/10-full-replacement-execution-record.md` | NKS Cilium full replacement 실행 기록 아카이브 |
-| 11 | `docs/11-full-replacement-assets-archive.md` | NKS Cilium full replacement manifest/script 자산 아카이브 |
-| 15 | `docs/15-hubble-network-monitoring.md` | Hubble UI/CLI, Grafana metrics, exporter 기반 모니터링 가이드 |
-| 16 | `docs/16-observability-architecture-concepts.md` | Calico chaining, Cilium, Hubble, Grafana, exporter 개념과 연계 구조 |
-| 30 | `docs/30-track-c-calico-chaining-hubble.md` | Calico 유지 + Cilium chaining + Hubble 실행 가이드 |
+| 01 | `docs/01-observability-architecture-concepts.md` | Calico chaining, Cilium, Hubble, Grafana, exporter 개념과 연계 구조 |
+| 02 | `docs/02-ingress-vs-gateway-api-reference.md` | full replacement 시도 당시 Ingress/Gateway API 참고 자료 |
+| 03 | `docs/03-environment-inventory.md` | 신규 NKS 클러스터 환경 기준선 |
+| 04 | `docs/04-nks-security-group.md` | NKS 기본 보안그룹과 Cilium/Hubble 필요 포트 확인 |
+| 05 | `docs/05-calico-chaining-hubble-runbook.md` | Calico 유지 + Cilium chaining + Hubble 실행 가이드 |
+| 06 | `docs/06-hubble-observability-runbook.md` | Hubble UI/CLI, Grafana metrics, exporter 기반 모니터링 가이드 |
 | 40 | `docs/40-option-pixie.md` | 추가 후보: Pixie |
 | 50 | `docs/50-option-grafana-beyla.md` | 추가 후보: Grafana Beyla |
+| 90 | `docs/90-full-replacement-execution-record.md` | NKS Cilium full replacement 실행 기록 아카이브 |
+| 91 | `docs/91-full-replacement-assets-archive.md` | NKS Cilium full replacement manifest/script 자산 아카이브 |
 
 ## 현재 클러스터 기준
 
-현재 값은 `docs/environment-inventory.md`를 기준으로 합니다.
+현재 값은 `docs/03-environment-inventory.md`를 기준으로 합니다.
 
 - Cluster: `ta-sgh-vxlan-sidecarless-cls`
 - Kubernetes server: `v1.33.4`
@@ -98,20 +99,21 @@ hubble version
 
 ## 기본 실행 순서
 
-1. `docs/environment-inventory.md`에서 신규 클러스터 기준선을 확인합니다.
-2. full replacement 실패 기록은 `docs/10-full-replacement-execution-record.md`와 `docs/11-full-replacement-assets-archive.md`에서 확인합니다.
-3. Cilium 기반 검증은 `docs/30-track-c-calico-chaining-hubble.md`를 우선 실행합니다.
-4. Hubble을 모니터링 용도로 확장하려면 `docs/15-hubble-network-monitoring.md`를 확인합니다.
-5. Cilium 외 sidecar-less 관측 대안은 `docs/40-option-pixie.md`, `docs/50-option-grafana-beyla.md`를 기준으로 비교합니다.
-6. Ingress/Gateway API 문서(`docs/05-ingress-vs-gateway-api.md`)는 full replacement 실패 전 작성된 참고 자료로만 봅니다.
+1. `docs/01-observability-architecture-concepts.md`에서 현재 구조와 도구 역할을 확인합니다.
+2. `docs/03-environment-inventory.md`에서 신규 클러스터 기준선을 확인합니다.
+3. `docs/04-nks-security-group.md`에서 보안그룹 전제와 포트를 확인합니다.
+4. Cilium 기반 검증은 `docs/05-calico-chaining-hubble-runbook.md`를 우선 실행합니다.
+5. Hubble을 모니터링 용도로 확장하려면 `docs/06-hubble-observability-runbook.md`를 확인합니다.
+6. Cilium 외 sidecar-less 관측 대안은 `docs/40-option-pixie.md`, `docs/50-option-grafana-beyla.md`를 기준으로 비교합니다.
+7. Ingress/Gateway API 문서(`docs/02-ingress-vs-gateway-api-reference.md`)와 full replacement 실패 기록(`docs/90-full-replacement-execution-record.md`, `docs/91-full-replacement-assets-archive.md`)은 참고/아카이브로 봅니다.
 
-운영형 Grafana 검증은 `docs/15-hubble-network-monitoring.md` 3장을 따릅니다. 적용 자산은 `manifests/15-kube-prometheus-stack-values.yaml`과 `manifests/15-cilium-hubble-metrics-values.yaml`입니다.
+운영형 Grafana 검증은 `docs/06-hubble-observability-runbook.md` 3장을 따릅니다. 적용 자산은 `manifests/06-kube-prometheus-stack-values.yaml`과 `manifests/06-cilium-hubble-metrics-values.yaml`입니다.
 
 ## 설치 전 반드시 확인할 값
 
 | 항목 | 현재 상태 | 필요 조치 |
 | --- | --- | --- |
-| 새 Cilium Pod CIDR | Track C에서는 사용 안 함 | Calico IPAM 유지 |
+| 새 Cilium Pod CIDR | 05번 실행 트랙에서는 사용 안 함 | Calico IPAM 유지 |
 | Service CIDR 공식값 | 미확정 | NKS 콘솔 또는 생성 파라미터에서 확인 |
 | Calico VXLAN `UDP 4789` | 사용 중 | 유지 |
 | Hubble Relay `TCP 4244` | 충족 예상 | 현재 NKS worker self `TCP 1-65535` 유지 확인 |

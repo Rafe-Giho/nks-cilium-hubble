@@ -1,6 +1,6 @@
-# Sidecar-less Observability Architecture Concepts
+# Sidecar-less 관측 아키텍처 개념
 
-- 목적: Track C에서 검증한 Calico chaining, Cilium, Hubble, Prometheus/Grafana, Hubble exporter의 개념과 연계 구조를 이론적으로 정리합니다.
+- 목적: Calico 유지 + Cilium chaining + Hubble에서 사용하는 Calico chaining, Cilium, Hubble, Prometheus/Grafana, Hubble exporter의 개념과 연계 구조를 이론적으로 정리합니다.
 - 상태: draft
 - 마지막 갱신: 2026-05-06
 
@@ -409,25 +409,25 @@ Grafana metrics와 exporter의 차이:
 
 | 파일 | 의미 |
 | --- | --- |
-| `manifests/30-cni-configuration.yaml` | Calico CNI 뒤에 `cilium-cni`를 추가하는 CNI chaining ConfigMap |
-| `manifests/30-cilium-chaining-values.yaml` | 기본 chaining + Hubble Relay/UI values |
-| `manifests/15-cilium-hubble-metrics-values.yaml` | chaining 유지 + Hubble metrics + ServiceMonitor + Grafana dashboard values |
-| `manifests/15-kube-prometheus-stack-values.yaml` | Prometheus/Grafana 운영형 PoC values |
-| `manifests/15-cilium-values-hubble-exporter.yaml` | metrics values를 base로 exporter까지 추가한 생성 values |
+| `manifests/05-cni-configuration.yaml` | Calico CNI 뒤에 `cilium-cni`를 추가하는 CNI chaining ConfigMap |
+| `manifests/05-cilium-chaining-values.yaml` | 기본 chaining + Hubble Relay/UI values |
+| `manifests/06-cilium-hubble-metrics-values.yaml` | chaining 유지 + Hubble metrics + ServiceMonitor + Grafana dashboard values |
+| `manifests/06-kube-prometheus-stack-values.yaml` | Prometheus/Grafana 운영형 PoC values |
+| `manifests/06-cilium-values-hubble-exporter.yaml` | metrics values를 base로 exporter까지 추가한 생성 values |
 
 values 누적 관계:
 
 ```text
-30-cilium-chaining-values.yaml
+05-cilium-chaining-values.yaml
   |
   v
-15-cilium-hubble-metrics-values.yaml
+06-cilium-hubble-metrics-values.yaml
   |
   v
-15-cilium-values-hubble-exporter.yaml
+06-cilium-values-hubble-exporter.yaml
 ```
 
-따라서 Grafana metrics를 이미 적용한 뒤 exporter를 추가할 때는 `15-cilium-hubble-metrics-values.yaml`을 base로 사용해야 합니다.
+따라서 Grafana metrics를 이미 적용한 뒤 exporter를 추가할 때는 `06-cilium-hubble-metrics-values.yaml`을 base로 사용해야 합니다.
 
 ## 현재 설계의 장점
 

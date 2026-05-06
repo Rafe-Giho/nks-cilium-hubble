@@ -1,4 +1,4 @@
-# Cilium Ingress vs Gateway API
+# Cilium Ingress vs Gateway API 참고
 
 - 목적: Cilium Ingress와 Cilium Gateway API를 현재 PoC 관점에서 비교하고 선택 기준을 정리합니다.
 - 상태: draft
@@ -55,8 +55,8 @@ Gateway API를 선택할 조건:
 
 ## 관련 파일
 
-- full replacement 실행 기록: `docs/10-full-replacement-execution-record.md`
-- full replacement 자산 보존: `docs/11-full-replacement-assets-archive.md`
+- full replacement 실행 기록: `docs/90-full-replacement-execution-record.md`
+- full replacement 자산 보존: `docs/91-full-replacement-assets-archive.md`
 - 전체 인덱스: `docs/00-install-runbook.md`
 
 ## 참고 출처

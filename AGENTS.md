@@ -2,9 +2,9 @@
 
 - 목적: 이 저장소에서 Codex가 따라야 할 작업 원칙과 문서 관리 규칙을 정의합니다.
 - 상태: active
-- 마지막 갱신: 2026-04-22
+- 마지막 갱신: 2026-05-06
 
-이 저장소의 목적은 NHN Cloud NKS에서 기본 CNI인 Calico 대신 Cilium을 적용하고, Cilium Ingress와 Hubble 기반 네트워크 모니터링 구성을 설계, 검증, 문서화하는 것입니다.
+이 저장소의 목적은 NHN Cloud NKS에서 sidecar-less 트래픽 관측 방안을 검토하고, Calico 유지 기반 Cilium chaining + Hubble 구성을 설계, 검증, 문서화하는 것입니다.
 
 ## 기본 원칙
 
@@ -27,7 +27,7 @@
 
 1. `reference/`에 공식 근거와 버전 제약을 정리합니다.
 2. `docs/`에 범위, 환경 정보, 실행 계획, 검증 기준을 정리합니다.
-3. `docs/00-install-runbook.md`와 번호형 Track 문서에 실행 순서를 정리합니다.
+3. `docs/00-install-runbook.md`와 번호형 문서에 실행 순서를 정리합니다.
 4. `manifests/`와 `scripts/`에 실제 적용 자산을 추가합니다.
 5. 실행 결과와 캡처는 `artifacts/`에 남깁니다.
 
@@ -44,13 +44,15 @@
 실제 클러스터 변경 전에 아래 문서는 초안 이상이어야 합니다.
 
 - `docs/project-scope.md`
-- `docs/environment-inventory.md`
+- `docs/03-environment-inventory.md`
 - `docs/execution-plan.md`
 - `docs/poc-scenarios.md`
 - `docs/validation-checklist.md`
 - `docs/00-install-runbook.md`
-- `docs/10-track-a-full-replacement-ingress.md`
-- `docs/15-hubble-network-monitoring.md`
+- `docs/01-observability-architecture-concepts.md`
+- `docs/04-nks-security-group.md`
+- `docs/05-calico-chaining-hubble-runbook.md`
+- `docs/06-hubble-observability-runbook.md`
 
 ## 문서 규칙
 
@@ -69,8 +71,8 @@
 
 ## 현재 우선순위
 
-1. NKS 환경 제약과 Cilium 적용 가능 조건 정리
+1. NKS 기본 Calico VXLAN 환경 제약과 Cilium chaining 적용 조건 정리
 2. 단일 클러스터 PoC 환경 인벤토리 확정
-3. Track A `Cilium full replacement + Ingress + Hubble` 실행 가이드 정합성 유지
+3. `Calico 유지 + Cilium generic-veth chaining + Hubble` 실행 가이드 정합성 유지
 4. Hubble UI/CLI, Grafana metrics, exporter 모니터링 선택 기준 정리
-5. 샘플 워크로드 기반 검증 절차와 롤백 포인트 정의
+5. Pixie, Beyla, Calico-eBPF 등 후속 sidecar-less 관측 후보 비교

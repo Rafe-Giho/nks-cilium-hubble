@@ -1,4 +1,4 @@
-# NKS Security Group Guide for Cilium
+# NKS Security Group 사전점검
 
 - 목적: NKS 기본 Calico 보안그룹을 Cilium full replacement PoC 당시 기준으로 평가하고 추가/수정/삭제 기준을 정리합니다.
 - 상태: draft

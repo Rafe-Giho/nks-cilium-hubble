@@ -10,14 +10,15 @@
 
 | 파일 | 용도 |
 | --- | --- |
-| `15-cilium-hubble-metrics-values.yaml` | Track C chaining 설정을 유지하면서 Cilium/Hubble metrics, ServiceMonitor, Grafana dashboard ConfigMap 활성화 |
-| `15-kube-prometheus-stack-values.yaml` | Cilium/Hubble ServiceMonitor와 dashboard ConfigMap을 수집하는 kube-prometheus-stack PoC values |
-| `30-cni-configuration.yaml` | NKS Calico VXLAN etcd 기반 CNI 뒤에 `cilium-cni`를 붙이는 chaining ConfigMap |
-| `30-cilium-chaining-values.yaml` | Cilium generic-veth chaining + Hubble Relay/UI Helm values |
+| `05-cni-configuration.yaml` | NKS Calico VXLAN etcd 기반 CNI 뒤에 `cilium-cni`를 붙이는 chaining ConfigMap |
+| `05-cilium-chaining-values.yaml` | Cilium generic-veth chaining + Hubble Relay/UI Helm values |
+| `06-cilium-hubble-metrics-values.yaml` | 05번 chaining 설정을 유지하면서 Cilium/Hubble metrics, ServiceMonitor, Grafana dashboard ConfigMap 활성화 |
+| `06-cilium-values-hubble-exporter.yaml` | 06번 metrics values를 base로 Hubble exporter까지 추가한 values |
+| `06-kube-prometheus-stack-values.yaml` | Cilium/Hubble ServiceMonitor와 dashboard ConfigMap을 수집하는 kube-prometheus-stack PoC values |
 
 ## 보존 자산
 
-삭제한 Cilium full replacement 실험 자산은 `docs/11-full-replacement-assets-archive.md`에 요약 보존합니다.
+삭제한 Cilium full replacement 실험 자산은 `docs/91-full-replacement-assets-archive.md`에 요약 보존합니다.
 
 ## 저장 규칙
 
