@@ -1,0 +1,21 @@
+cluster:
+  name: ta-sgh-vxlan-sidecarless-cls
+
+cni:
+  chainingMode: generic-veth
+  customConf: true
+  configMap: cni-configuration
+  confPath: /etc/cni/net.d/calico
+  exclusive: false
+
+routingMode: native
+kubeProxyReplacement: "false"
+enableIPv4Masquerade: false
+enableIdentityMark: false
+
+hubble:
+  enabled: true
+  relay:
+    enabled: true
+  ui:
+    enabled: true

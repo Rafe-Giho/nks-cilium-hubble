@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cni-configuration
+  namespace: kube-system
+data:
+  cni-config: |-
+    {
+      "name": "generic-veth",
+      "cniVersion": "0.3.1",
+      "plugins": [
+        {
+          "type": "calico",
+          "log_level": "info",
+          "log_file_path": "/var/log/calico/cni/cni.log",
+          "etcd_endpoints": "https://192.168.200.82:2379,https://192.168.200.46:2379,https://192.168.200.95:2379",
+          "etcd_key_file": "/etc/cni/net.d/calico/calico-tls/etcd-key",
+          "etcd_cert_file": "/etc/cni/net.d/calico/calico-tls/etcd-cert",
+          "etcd_ca_cert_file": "/etc/cni/net.d/calico/calico-tls/etcd-ca",
+          "mtu": 0,
+          "ipam": {
+            "type": "calico-ipam"
+          },
+          "policy": {
+            "type": "k8s"
+          },
+          "kubernetes": {
+            "kubeconfig": "/etc/cni/net.d/calico/calico-kubeconfig"
+          }
+        },
+        {
+          "type": "portmap",
+          "snat": true,
+          "capabilities": {"portMappings": true}
+        },
+        {
+          "type": "bandwidth",
+          "capabilities": {"bandwidth": true}
+        },
+        {
+          "type": "cilium-cni"
+        }
+      ]
+    }

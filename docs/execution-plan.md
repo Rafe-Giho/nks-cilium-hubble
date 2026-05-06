@@ -2,7 +2,7 @@
 
 - 목적: 조사, 설계, 검증, 적용의 순서를 고정합니다.
 - 상태: draft
-- 마지막 갱신: 2026-04-22
+- 마지막 갱신: 2026-05-06
 
 ## 단계
 
@@ -17,11 +17,11 @@
 
 ## 현재 즉시 할 일
 
-1. `docs/10-track-a-full-replacement-ingress.md`의 중단 조건을 확인합니다.
-2. 새 Cilium Pod CIDR과 Cilium/Hubble 보안그룹 기준을 확정합니다.
-3. Track A 절차에 따라 Cilium secondary mode부터 node-by-node migration을 수행합니다.
-4. 샘플 Ingress와 Hubble UI/CLI 검증 결과를 `artifacts/`에 남깁니다.
-5. 운영형 모니터링이 필요하면 `docs/15-hubble-network-monitoring.md`에서 Grafana metrics/exporter 트랙을 별도 선택합니다.
+1. `docs/30-track-c-calico-chaining-hubble.md` 기준으로 Cilium chaining + Hubble PoC를 수행합니다.
+2. 설치 후 `docs/validation-checklist.md`에 결과를 기록합니다.
+3. Hubble UI/CLI 확인 후 운영형 metrics/exporter 필요성을 `docs/15-hubble-network-monitoring.md` 기준으로 판단합니다.
+4. Calico VXLAN 유지 + Pixie/Beyla 관측안을 비교합니다.
+5. 신규 NKS 클러스터의 Calico-eBPF 기반 sidecar-less 관측안을 별도 설계합니다.
 
 ## 게이트 조건
 

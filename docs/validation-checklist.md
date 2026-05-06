@@ -2,62 +2,88 @@
 
 - 목적: 변경 전후 확인 항목을 일관되게 관리합니다.
 - 상태: draft
-- 마지막 갱신: 2026-04-22
+- 마지막 갱신: 2026-05-06
 
 ## 변경 전 확인
 
 | 항목 | 기대 결과 | 상태 |
 | --- | --- | --- |
-| PoC 클러스터 재생성 기준 확인 | 실패 시 복구 경로 명확 | `[입력 필요]` |
-| 클러스터가 생성 직후 기본 Calico 상태인지 확인 | 기준선 일치 | `[입력 필요]` |
-| worker node 수와 flavor 확인 | PoC 최소 조건 충족 | `[입력 필요]` |
+| PoC 클러스터 재생성 기준 확인 | 실패 시 복구 경로 명확 | 확인: 신규 클러스터 `ta-sgh-vxlan-sidecarless-cls` |
+| 클러스터가 생성 직후 기본 Calico 상태인지 확인 | 기준선 일치 | 통과 |
+| worker node 수와 flavor 확인 | PoC 최소 조건 충족 | 2대 Ready, flavor는 콘솔 확인 필요 |
+| Calico Pod 정상 | `calico-node` 2/2, typha/controller Ready | 통과 |
+| metrics APIService 정상 | `v1beta1.metrics.k8s.io AVAILABLE=True` | 통과 |
+| NetworkPolicy 없음 | 기존 정책 영향 없음 | 통과 |
+| Helm release 없음 | 새 설치 기준선 | 통과 |
+| CRD 없음 | Cilium 잔존 없음 | 통과 |
+| 실제 Calico CNI 설정 확인 | `/etc/cni/net.d/calico/10-calico.conflist` 확인 | 통과 |
+| generic-veth 가능 여부 확인 | 노드에 `cali...` veth 존재 | 통과 |
 | NKS worker self TCP 전체 허용 확인 | `TCP 1-65535` from worker security group 유지 | 사용자 제공 기준 충족 |
 | NKS worker self UDP 전체 허용 확인 | `UDP 1-65535` from worker security group 유지 | 사용자 제공 기준 충족 |
-| Cilium VXLAN용 노드 간 8472/UDP 경로 검토 | Cilium tunnel 통신 가능 | 사용자 제공 기준 충족 예상 |
 | Hubble Relay용 노드 간 4244/TCP 경로 검토 | Relay 통신 가능 | 사용자 제공 기준 충족 예상 |
 | Cilium health용 4240/TCP와 ICMP 검토 | health 확인 가능 | TCP 충족 예상, ICMP 확인 필요 |
-| 샘플 워크로드/Ingress 검증 자산 준비 | 테스트 가능 | `[입력 필요]` |
-| 성능/운영 단순화 측정 항목 준비 | 성공 판단 가능 | `[입력 필요]` |
 
-## Cilium 확인
+## Cilium Chaining 확인
 
 | 항목 | 기대 결과 | 상태 |
 | --- | --- | --- |
-| Cilium Pod 정상 기동 | 핵심 Pod Ready | `[입력 필요]` |
-| CNI 교체 후 Pod 네트워킹 정상 | 기본 통신 성공 | `[입력 필요]` |
-| kube-system 주요 컴포넌트 통신 정상 | 제어면 영향 없음 | `[입력 필요]` |
-| `cilium status` 정상 | 설치 상태 확인 | `[입력 필요]` |
-| `cilium connectivity test` 또는 동등 샘플 테스트 통과 | 기본 네트워크 검증 | `[입력 필요]` |
+| `cni-configuration` ConfigMap 적용 | 실제 Calico etcd 기반 CNI + `cilium-cni` 포함 | 통과 |
+| Cilium Helm release 설치 | `kube-system/cilium` deployed | 통과 |
+| Cilium DaemonSet 정상 기동 | `ds/cilium` Ready 2/2 | 통과 |
+| Cilium Operator 정상 | Deployment Ready | 통과: 2/2 |
+| `cilium status --wait` 정상 | Cilium OK | 통과: 리소스 Ready, CLI 출력 별도 보존 필요 |
+| Calico 기존 네트워킹 유지 | `calico-node` 2/2 유지 | 통과: 신규 Pod/Service 통신 정상 |
+| kube-proxy replacement 비활성 | `kubeProxyReplacement=false` | 통과 |
+| metrics APIService 유지 | Available True | 통과 |
+
+## 신규 Pod 확인
+
+| 항목 | 기대 결과 | 상태 |
+| --- | --- | --- |
+| `cilium-chain-check` namespace 생성 | namespace Ready | 통과 |
+| 신규 `curl` Pod Ready | Calico IP 할당, Pod Ready | 통과: `10.100.188.10` |
+| API Service DNS/통신 | `kubernetes.default.svc` 접근 가능 | 통과: `401 Unauthorized` 정상 응답 |
+| kube-dns Service 통신 | `kube-dns.kube-system.svc.cluster.local:9153` 접근 가능 | 통과 |
+| 기존 kube-system 영향 없음 | CoreDNS/metrics-server 정상 | 통과 |
 
 ## Hubble 확인
 
 | 항목 | 기대 결과 | 상태 |
 | --- | --- | --- |
-| Hubble Relay 정상 기동 | Relay Ready | `[입력 필요]` |
-| Hubble UI 정상 기동 | UI 접근 가능 | `[입력 필요]` |
-| Hubble CLI 접근 가능 | Relay 연동 가능 | `[입력 필요]` |
-| DNS, Pod-to-Pod, Service 흐름 조회 가능 | 요구 가시성 확보 | `[입력 필요]` |
-| 네임스페이스 또는 라벨 기준 필터링 가능 | 운영 확인 가능 | `[입력 필요]` |
-| Hubble metrics 활성화 여부 판단 | 운영형 모니터링 범위 결정 | `[입력 필요]` |
+| Hubble Relay 정상 기동 | Relay Ready | 통과: 1/1 |
+| Hubble UI 정상 기동 | UI 접근 가능 | 부분 통과: Pod 2/2, 브라우저 접근 미확인 |
+| Hubble CLI 접근 가능 | Relay 연동 가능 | 통과: `Healthcheck Ok`, `Connected Nodes 2/2` |
+| 신규 namespace flow 조회 | `cilium-chain-check` flow 확인 | 통과 |
+| DNS, Pod-to-Service 흐름 조회 가능 | 요구 가시성 확보 | 통과: `:53`, `:9153` flow 확인 |
+| 네임스페이스 또는 라벨 기준 필터링 가능 | 운영 확인 가능 | 통과: namespace filter 확인 |
+| Hubble metrics 활성화 여부 판단 | 운영형 모니터링 범위 결정 | 결정: Grafana용 Hubble metrics 우선, exporter는 후속 |
 | Hubble exporter 사용 여부 판단 | 장기 flow 검색/감사 범위 결정 | `[입력 필요]` |
 
-## Ingress 확인
+주의:
+
+- `hubble-cli-version=1.18.6`, `hubble-relay-version=1.19.3` 경고 확인. 장기 검증 전 CLI 업그레이드 권장.
+- port-forward 세션이 `connection reset by peer`, `EOF`, `connection refused`로 종료될 수 있음. Hubble 실패가 아니라 port-forward 세션 종료로 분류.
+- `Unsupported L3 protocol DROPPED (ICMPv6 RouterSolicitation)`은 IPv6 비활성 환경의 비차단 이벤트로 분류.
+
+## Grafana 운영형 확인
 
 | 항목 | 기대 결과 | 상태 |
 | --- | --- | --- |
-| Cilium Ingress Controller 정상 기동 | 핵심 컴포넌트 Ready | `[입력 필요]` |
-| 샘플 HTTP backend에 외부 요청 전달 | north-south 경로 정상 | `[입력 필요]` |
-| Ingress 관련 flow가 Hubble에서 식별 가능 | 가시성 확보 | `[입력 필요]` |
-| 필요 시 `X-Forwarded-For`/source IP 동작 검토 | 후속 앱 연동 대비 | `[입력 필요]` |
+| kube-prometheus-stack values 검증 | Helm template 성공 | 통과: 로컬 template 검증 |
+| Cilium/Hubble metrics values 검증 | Track C chaining 유지 + ServiceMonitor/dashboard 렌더링 | 통과: 로컬 template 검증 |
+| kube-prometheus-stack 설치 | `monitoring` namespace 주요 Pod Ready | `[입력 필요]` |
+| Cilium/Hubble metrics 적용 | `hubble-metrics` Service와 `ServiceMonitor` 생성 | `[입력 필요]` |
+| Prometheus target 확인 | Cilium/Hubble target `UP` | `[입력 필요]` |
+| Grafana dashboard 확인 | Cilium/Hubble dashboard 자동 로드 | `[입력 필요]` |
+| PromQL 확인 | `{__name__=~"hubble_.*"}` 결과 존재 | `[입력 필요]` |
 
-## 샘플 워크로드 확인
+## 대안 관측 도구 확인
 
 | 항목 | 기대 결과 | 상태 |
 | --- | --- | --- |
-| same namespace 통신 | 정상 | `[입력 필요]` |
-| cross namespace 통신 | 정상 | `[입력 필요]` |
-| DNS 질의 흐름 | 정상 | `[입력 필요]` |
-| NetworkPolicy 추가 시 허용/차단 변화 | Hubble에 반영 | `[입력 필요]` |
+| Pixie 검토 | CNI 변경 없는 eBPF 관측 가능성 판단 | `[입력 필요]` |
+| Grafana Beyla 검토 | 앱/서비스 관측 가능성 판단 | `[입력 필요]` |
+| Calico-eBPF 검토 | NKS 적용 가능성 별도 판단 | `[입력 필요]` |
 
 ## 성능/운영성 확인
 
@@ -65,20 +91,21 @@
 | --- | --- | --- |
 | 샘플 HTTP 요청 p50/p95 지연 수집 | 후속 비교 기준 확보 | `[입력 필요]` |
 | 샘플 backend Pod CPU/메모리 수집 | 워크로드 기준선 확보 | `[입력 필요]` |
-| Cilium/Hubble/Ingress Pod CPU/메모리 수집 | 관측 구성 오버헤드 확인 | `[입력 필요]` |
-| HPA scale-out 이벤트 관측 | 확장 시점 흐름 확인 | `[입력 필요]` |
+| Cilium/Hubble Pod CPU/메모리 수집 | 관측 구성 오버헤드 확인 | `[입력 필요]` |
 | 설치/점검 단계 수 기록 | 운영 단순화 판단 근거 확보 | `[입력 필요]` |
 | Hubble metrics 또는 exporter 선택 결과 기록 | PoC/운영 모니터링 경계 명확화 | `[입력 필요]` |
 
 ## 롤백 조건
 
-- 핵심 워크로드 통신 장애 발생
-- 제어면 또는 kube-system 비정상
-- Cilium Ingress 또는 Hubble 구성 후 클러스터 기본 네트워킹 회복 불가
+- 신규 Pod 생성 실패
+- kube-system 주요 Pod 비정상
+- metrics APIService 비정상화
+- Calico CNI 기본 네트워킹 장애
 - Hubble 요구사항 미충족과 동시에 복구 불가
 
 ## 롤백 방식
 
-- 1차 기본안은 PoC 클러스터 삭제 후 재생성입니다.
-- 운영 워크로드가 없다는 전제에서 in-place 복구보다 재생성을 우선합니다.
-- 재생성 전 `artifacts/`에 실패 시점의 Pod 상태, 이벤트, Cilium/Hubble 상태를 남깁니다.
+- 1차: `helm -n kube-system uninstall cilium`
+- 2차: `cni-configuration` ConfigMap 삭제
+- 3차: 노드의 `/etc/cni/net.d/calico/05-cilium.conflist` 잔존 시 제거
+- 최종: PoC 클러스터 삭제 후 재생성
