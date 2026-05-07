@@ -46,6 +46,13 @@ hubble:
     enabled: true
   ui:
     enabled: true
+  tls:
+    auto:
+      enabled: true
+      method: helm
+    server:
+      extraDnsNames:
+        - "*.ta-sgh-vxlan-sidecarless-cls.hubble-grpc.cilium.io"
 k8sServiceHost: 3103cceb-nks-kr1.container.nhncloud.com
 k8sServicePort: 6443
 kubeProxyReplacement: "false"

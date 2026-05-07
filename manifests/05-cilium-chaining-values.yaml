@@ -19,3 +19,10 @@ hubble:
     enabled: true
   ui:
     enabled: true
+  tls:
+    auto:
+      enabled: true
+      method: helm
+    server:
+      extraDnsNames:
+        - "*.ta-sgh-vxlan-sidecarless-cls.hubble-grpc.cilium.io"

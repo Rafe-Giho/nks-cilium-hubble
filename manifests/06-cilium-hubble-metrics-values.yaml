@@ -62,3 +62,10 @@ hubble:
       enabled: true
       label: grafana_dashboard
       labelValue: "1"
+  tls:
+    auto:
+      enabled: true
+      method: helm
+    server:
+      extraDnsNames:
+        - "*.ta-sgh-vxlan-sidecarless-cls.hubble-grpc.cilium.io"
