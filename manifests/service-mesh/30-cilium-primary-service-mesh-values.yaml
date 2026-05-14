@@ -1,0 +1,58 @@
+cluster:
+  name: "[input-required]"
+
+kubeProxyReplacement: "true"
+l7Proxy: true
+
+envoyConfig:
+  enabled: true
+
+gatewayAPI:
+  enabled: true
+  hostNetwork:
+    enabled: false
+
+prometheus:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    trustCRDsExist: true
+
+operator:
+  replicas: 1
+  prometheus:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+
+envoy:
+  prometheus:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+
+hubble:
+  enabled: true
+  relay:
+    enabled: true
+  ui:
+    enabled: true
+  metrics:
+    enableOpenMetrics: true
+    enabled:
+      - dns:query;ignoreAAAA
+      - drop
+      - tcp
+      - flow
+      - port-distribution
+      - icmp
+      - "httpV2:exemplars=true;labelsContext=source_namespace,source_workload,destination_namespace,destination_workload,traffic_direction"
+    serviceMonitor:
+      enabled: true
+  export:
+    static:
+      enabled: true
+      filePath: /var/run/cilium/hubble/events.log
+    fileMaxSizeMb: 100
+    fileMaxBackups: 10
+    fileCompress: true

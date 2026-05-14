@@ -1,0 +1,4 @@
+ingressController:
+  enabled: true
+  default: false
+  loadbalancerMode: dedicated

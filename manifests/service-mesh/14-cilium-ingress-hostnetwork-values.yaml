@@ -1,0 +1,6 @@
+ingressController:
+  enabled: true
+  default: false
+  loadbalancerMode: dedicated
+  hostNetwork:
+    enabled: true

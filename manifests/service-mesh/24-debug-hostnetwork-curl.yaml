@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cilium-service-mesh-check
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hostnetwork-curl
+  namespace: cilium-service-mesh-check
+spec:
+  hostNetwork: true
+  dnsPolicy: ClusterFirstWithHostNet
+  restartPolicy: Never
+  containers:
+    - name: curl
+      image: curlimages/curl:8.10.1
+      command:
+        - sleep
+        - "3600"

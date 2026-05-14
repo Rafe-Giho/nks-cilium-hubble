@@ -2,7 +2,7 @@
 
 - 목적: 프로젝트에서 직접 작성하고 유지보수하는 문서 목록과 작성 규칙을 관리합니다.
 - 상태: draft
-- 마지막 갱신: 2026-05-06
+- 마지막 갱신: 2026-05-11
 
 직접 작성하고 유지보수하는 프로젝트 문서를 관리합니다.
 
@@ -15,6 +15,7 @@
 - `04-nks-security-group.md`: NKS 기본 보안그룹과 Cilium/Hubble 필요 포트 확인
 - `05-calico-chaining-hubble-runbook.md`: Calico 유지 + Cilium chaining + Hubble 실행 가이드
 - `06-hubble-observability-runbook.md`: Hubble UI/CLI, Grafana metrics, exporter 기반 모니터링 가이드
+- `service-mesh/`: 고객 요청 시 Cilium Gateway API/GAMMA 기반 Service Mesh 검토와 실행 가이드
 - `40-option-pixie.md`: Pixie 기반 sidecar-less 관측 가이드
 - `50-option-grafana-beyla.md`: Grafana Beyla 기반 sidecar-less 관측 가이드
 - `90-full-replacement-execution-record.md`: NKS Cilium full replacement 실행 기록 아카이브
@@ -40,3 +41,4 @@
 - 실제 적용 절차를 만들기 전 `execution-plan.md`와 `validation-checklist.md`를 먼저 채웁니다.
 - 번호형 실행 가이드가 추가/변경되면 `00-install-runbook.md`와 이 README를 함께 갱신합니다.
 - Hubble 모니터링 범위가 바뀌면 `06-hubble-observability-runbook.md`, `validation-checklist.md`, `reference/source-tracking.md`를 함께 맞춥니다.
+- Service Mesh 범위가 바뀌면 `service-mesh/`, `manifests/service-mesh/`, `decision-log.md`, `reference/source-tracking.md`를 함께 맞춥니다.

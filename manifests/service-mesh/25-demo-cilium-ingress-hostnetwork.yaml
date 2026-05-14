@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: web-ingress-hostnetwork
+  namespace: cilium-service-mesh-demo
+  annotations:
+    ingress.cilium.io/host-listener-port: "8081"
+spec:
+  ingressClassName: cilium
+  rules:
+    - host: mesh-demo-ingress.example
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web
+                port:
+                  number: 80

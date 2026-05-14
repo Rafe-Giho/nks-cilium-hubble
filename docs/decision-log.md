@@ -2,7 +2,7 @@
 
 - 목적: 프로젝트 주요 판단과 근거를 추적합니다.
 - 상태: draft
-- 마지막 갱신: 2026-05-06
+- 마지막 갱신: 2026-05-13
 
 | ID | 날짜 | 주제 | 결정 | 근거 | 영향 | 상태 |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -22,3 +22,7 @@
 | D-014 | 2026-05-06 | Track C 기본 검증 결과 | Calico 유지 + Cilium generic-veth chaining + Hubble 기본 관측을 성공으로 판정 | 신규 `curl` Pod가 Calico IP를 받고 API/CoreDNS/metrics API 통신 성공, Hubble Relay healthcheck OK, connected nodes 2/2, `cilium-chain-check` DNS/CoreDNS metrics flow 확인 | 다음 단계는 Hubble CLI 버전 정합화, UI 접근 확인, 운영형 metrics/exporter 검토 | validated-basic |
 | D-015 | 2026-05-06 | 운영형 Grafana 관측 방식 | 운영형 대시보드는 `kube-prometheus-stack` + Cilium/Hubble `ServiceMonitor` + Grafana dashboard ConfigMap 방식으로 진행 | Hubble UI/CLI는 실시간 flow 확인에 적합하고, Grafana는 Prometheus 기반 시계열/알람/대시보드 운영에 적합함 | `docs/06-hubble-observability-runbook.md`, `manifests/06-*`를 Grafana 검증 기준으로 사용 | ready |
 | D-016 | 2026-05-06 | 문서 번호 체계 정리 | 번호형 문서를 `00` 인덱스, `01` 이론, `02` 참고 이론, `03` 환경 기준선, `04` 보안그룹, `05` 실행, `06` 운영 관측, `90/91` full replacement 아카이브로 재정렬 | Notion 정리 순서와 로컬 문서 순서가 달라 가독성이 떨어졌음 | 문서와 manifest 번호를 실행 흐름 기준으로 맞춤 | applied |
+| D-017 | 2026-05-11 | Service Mesh 별도 트랙 | 고객 요청으로 Cilium Service Mesh 도입이 필요한 경우를 위해 `docs/service-mesh/`와 `manifests/service-mesh/`를 별도 관리 | 현재 Cilium chaining + Hubble은 성공했지만 Gateway API/GAMMA는 `kubeProxyReplacement=true`, Gateway API CRD, LoadBalancer/hostNetwork 검증이 추가로 필요함 | 기존 관측 트랙과 분리해 영향 범위를 통제 | draft |
+| D-018 | 2026-05-13 | Service Mesh 운영 무게 비교 | 현재 요구가 flow 관측이면 Cilium chaining + Hubble을 유지하고, Service Mesh 기능 요구가 있으면 Istio Ambient 등을 별도 PoC 후보로 분리 | 현재 Cilium/Hubble 추가분은 71m/482Mi 실측, Istio Ambient + Kiali 기본 request는 1110m/3336Mi로 산정됨. Cilium Gateway/Ingress/GAMMA/L7 Policy는 현재 NKS Calico chaining 구성에서 운영 안정성을 확보하지 못함 | 고객 요구사항을 flow 관측형과 service mesh형으로 분리해 제안 필요 | updated |
+| D-019 | 2026-05-13 | Cilium Service Mesh PoC 결과 | 현재 NKS Calico primary + Cilium generic-veth chaining 구성에서는 Cilium Gateway API/Ingress/GAMMA를 운영 적용하지 않는다 | Gateway/HTTPRoute 제어면과 LB IP 할당은 성공했지만 실제 HTTP 요청은 실패했고, NodePort/hostNetwork/Ingress 대안도 불안정함. GAMMA Service parentRef HTTPRoute도 실제 parent Service 요청 timeout이 재현됨 | 외부 진입은 별도 Ingress/LB로 분리하고, Cilium은 Hubble 관측 중심으로 유지 | concluded |
+| D-020 | 2026-05-13 | Cilium Service Mesh 최종 판정 보강 | 현재 NKS Calico primary + Cilium generic-veth chaining 환경에서는 Cilium Service Mesh를 운영 수준으로 구성하지 않는다 | HTTP L7 CiliumNetworkPolicy 적용 시 BPF policy map은 `80/TCP -> proxy port 13147`로 매칭되고 monitor에도 `action redirect`가 찍혔지만, Envoy listener `127.0.0.1:13147`의 accepted connection은 0이며 요청은 timeout됨. policy 삭제 후 200 응답으로 복구됨 | Cilium은 Hubble 관측용으로 유지하고, Cilium Service Mesh 가이드는 Cilium primary CNI가 가능한 별도 환경 기준으로 분리 | concluded |

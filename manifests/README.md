@@ -2,7 +2,7 @@
 
 - 목적: Helm values, Kubernetes YAML, 샘플 설정의 저장 규칙을 관리합니다.
 - 상태: active
-- 마지막 갱신: 2026-05-06
+- 마지막 갱신: 2026-05-11
 
 실제 적용 자산을 관리합니다.
 
@@ -15,6 +15,7 @@
 | `06-cilium-hubble-metrics-values.yaml` | 05번 chaining 설정을 유지하면서 Cilium/Hubble metrics, ServiceMonitor, Grafana dashboard ConfigMap 활성화 |
 | `06-cilium-values-hubble-exporter.yaml` | 06번 metrics values를 base로 Hubble exporter까지 추가한 values |
 | `06-kube-prometheus-stack-values.yaml` | Cilium/Hubble ServiceMonitor와 dashboard ConfigMap을 수집하는 kube-prometheus-stack PoC values |
+| `service-mesh/` | Cilium Gateway API/GAMMA 기반 Service Mesh PoC values와 샘플 manifest |
 
 ## 보존 자산
 

@@ -1,0 +1,88 @@
+cluster:
+  name: ta-sgh-vxlan-sidecarless-cls
+
+cni:
+  chainingMode: generic-veth
+  customConf: true
+  configMap: cni-configuration
+  confPath: /etc/cni/net.d/calico
+  exclusive: false
+
+routingMode: native
+kubeProxyReplacement: "true"
+enableIPv4Masquerade: false
+enableIdentityMark: false
+l7Proxy: true
+
+envoyConfig:
+  enabled: true
+
+gatewayAPI:
+  enabled: true
+  hostNetwork:
+    enabled: false
+
+prometheus:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    trustCRDsExist: true
+
+operator:
+  replicas: 1
+  prometheus:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+  dashboards:
+    enabled: true
+    label: grafana_dashboard
+    labelValue: "1"
+
+envoy:
+  prometheus:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+
+dashboards:
+  enabled: true
+  label: grafana_dashboard
+  labelValue: "1"
+
+hubble:
+  enabled: true
+  relay:
+    enabled: true
+  ui:
+    enabled: true
+  metrics:
+    enableOpenMetrics: true
+    enabled:
+      - dns:query;ignoreAAAA
+      - drop
+      - tcp
+      - flow
+      - port-distribution
+      - icmp
+      - "httpV2:exemplars=true;labelsContext=source_ip,source_namespace,source_workload,destination_ip,destination_namespace,destination_workload,traffic_direction"
+    serviceMonitor:
+      enabled: true
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      labelValue: "1"
+  export:
+    static:
+      enabled: true
+      filePath: /var/run/cilium/hubble/events.log
+    fileMaxSizeMb: 100
+    fileMaxBackups: 10
+    fileCompress: true
+  tls:
+    auto:
+      enabled: true
+      method: helm
+    server:
+      extraDnsNames:
+        - "*.ta-sgh-vxlan-sidecarless-cls.hubble-grpc.cilium.io"
