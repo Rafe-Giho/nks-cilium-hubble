@@ -2,7 +2,7 @@
 
 - 목적: Cilium Service Mesh PoC 적용 전후의 성공 기준과 중단 기준을 추적합니다.
 - 상태: draft
-- 마지막 갱신: 2026-05-13
+- 마지막 갱신: 2026-05-14
 
 ## 적용 전
 
@@ -15,7 +15,7 @@
 | Calico 상태 | `calico-node` Ready |
 | Cilium 상태 | `cilium status` OK |
 | Cilium Envoy | DaemonSet Ready |
-| Hubble Relay/UI | Ready |
+| Hubble Relay/UI | Ready. 관측 계층 성공 기준이며, datapath 성공 기준은 Envoy/Gateway/GAMMA 요청으로 별도 판단 |
 | metrics API | `v1beta1.metrics.k8s.io` Available True |
 | Gateway API CRD | 최초 구축 전이면 미설치, 재실행이면 버전/소유자 확인 |
 | `kubeProxyReplacement` | 최초 구축 전이면 `false`, 4번 이후 재검증이면 `true` |
@@ -40,9 +40,9 @@
 | --- | --- |
 | dry-run 성공 | Helm YAML 렌더링 성공 |
 | chaining 설정 유지 | `generic-veth`, `/etc/cni/net.d/calico`, `exclusive=false` 유지 |
-| Hubble 설정 유지 | Relay/UI/metrics/exporter 설정 유지 |
 | Gateway API 활성화 | `gatewayAPI.enabled=true` |
 | kube-proxy replacement | `kubeProxyReplacement=true` |
+| Hubble 활성화 | Relay/UI/metrics/exporter 설정 렌더링 확인 |
 
 ## 적용 후 기본 상태
 
@@ -68,7 +68,8 @@
 | HTTPRoute | Accepted=True, ResolvedRefs=True |
 | LoadBalancer | 외부 주소 또는 FQDN 할당 |
 | HTTP 요청 | `mesh-demo.example` 요청 성공 |
-| Hubble flow | Gateway/Service/Pod 흐름 확인 |
+| Envoy/Cilium proxy 상태 | Gateway 요청 후 proxy metric 또는 로그에서 요청 처리 흔적 확인 |
+| Hubble 관측 | Gateway 요청 후 flow 또는 HTTP L7 metric 확인 |
 
 추가 대안 검증:
 
@@ -86,7 +87,8 @@
 | Service parentRef HTTPRoute | 생성 성공 |
 | HTTPRoute 상태 | Accepted=True, ResolvedRefs=True |
 | 내부 Pod 요청 | `http://web/` 성공 |
-| Hubble L7 flow | HTTP flow 확인 |
+| Envoy/Cilium proxy 상태 | 요청 후 proxy metric 또는 로그에서 요청 처리 흔적 확인 |
+| Hubble 관측 | Service/GAMMA 요청 후 flow 또는 HTTP L7 metric 확인 |
 
 ## 중단 기준
 

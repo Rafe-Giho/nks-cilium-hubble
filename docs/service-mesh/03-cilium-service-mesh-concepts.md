@@ -2,7 +2,7 @@
 
 - 목적: Cilium Service Mesh의 구성요소와 NKS Calico chaining 환경에서의 제약을 이론적으로 정리합니다.
 - 상태: draft
-- 마지막 갱신: 2026-05-13
+- 마지막 갱신: 2026-05-14
 
 ## 먼저 결론
 
@@ -15,7 +15,7 @@
 | --- | --- | --- |
 | 주 목적 | 네트워크 flow 관측 | L7 트래픽 처리, 라우팅, 보안, 관측 |
 | Primary CNI | Calico 유지 | Cilium primary 권장 |
-| Cilium 역할 | chained CNI + Hubble 관측 | primary CNI + Service datapath/L7 proxy 연계 |
+| Cilium 역할 | chained CNI + Hubble 관측 | primary CNI + Service datapath/L7 proxy + Hubble 관측 |
 | `kubeProxyReplacement` | `false` | `true` 필요 |
 | Envoy | 기동 중이지만 핵심 경로 아님 | Ingress/Gateway/GAMMA/L7 경로의 핵심 |
 | Gateway API CRD | 없음 | 필요 |
@@ -88,11 +88,15 @@ Control
   CiliumEnvoyConfig
 
 Observability
-  Hubble
+  Hubble Relay/UI/metrics
   Prometheus/Grafana
+
 ```
 
 Cilium은 IP/TCP/UDP 같은 네트워크 계층 처리는 eBPF로 처리하고, HTTP/gRPC/DNS 같은 애플리케이션 계층 처리는 Envoy를 사용합니다.
+Hubble은 Cilium의 관측 계층입니다.
+Service Mesh datapath 자체는 아니지만, 이 프로젝트의 구축 가이드에서는 Gateway/GAMMA/L7 proxy 경로를 검증하기 위해 Hubble Relay/UI/metrics를 함께 활성화합니다.
+즉, Hubble은 자동 포함 기능으로 가정하지 않고 Helm values에서 명시적으로 켭니다.
 
 중요한 점은 “sidecar-less”입니다.
 Cilium Service Mesh는 일반적으로 애플리케이션 Pod마다 proxy sidecar를 넣는 방식이 아니라, 노드 단의 Cilium/Envoy 구성으로 트래픽을 처리합니다.
@@ -172,7 +176,7 @@ Envoy는 Cilium Service Mesh의 L7 proxy입니다.
 - traffic split
 - TLS termination 또는 passthrough 일부 처리
 - L7 policy enforcement point
-- Hubble HTTP metrics 생성에 필요한 L7 visibility 제공
+- Hubble HTTP metrics와 Envoy/Cilium proxy metric에 필요한 L7 visibility 제공
 
 현재 클러스터에는 `cilium-envoy` DaemonSet이 이미 Ready입니다.
 하지만 현재 Hubble 관측 구성에서는 모든 트래픽이 Envoy를 통과한다는 의미가 아닙니다.
@@ -268,10 +272,11 @@ Cilium에서 GAMMA의 의미:
 
 주의:
 
-- Cilium 문서 기준 GAMMA는 experimental 성격이 남아 있습니다.
-- Cilium은 producer route 중심으로 지원합니다.
-- consumer route는 현재 주요 제약입니다.
-- 따라서 운영 기능으로 확정하기 전 PoC 결과가 필요합니다.
+- Cilium의 GAMMA 지원 범위는 Cilium/Gateway API 버전에 따라 달라질 수 있습니다.
+- Cilium 문서 기준 현재 producer route만 지원하며, HTTPRoute는 parent Service와 같은 namespace에 있어야 합니다.
+- Cilium 문서 기준 consumer HTTPRoute는 지원하지 않으므로 `MeshConsumerRoute` 기능은 현재 검증 범위에서 제외합니다.
+- Gateway API v1.0 기준 GAMMA 자체는 experimental로 설명되므로, 운영 기능으로 확정하기 전에는 공식 GAMMA 문서의 지원 범위와 현재 클러스터 버전을 함께 확인해야 합니다.
+- 이 프로젝트에서는 `parentRef=Service` producer route 형태의 HTTPRoute를 검증 대상으로 두되, 현재 NKS chaining 환경에서는 datapath 실패로 운영 적용하지 않습니다.
 
 ## L7 Traffic Management
 
@@ -315,21 +320,22 @@ Cilium mutual authentication의 방향:
 현재 프로젝트 판단:
 
 - 이번 Service Mesh 1차 PoC 범위에는 넣지 않습니다.
-- Gateway API/GAMMA/L7 관측이 먼저입니다.
+- Gateway API/GAMMA/L7 datapath 검증이 먼저입니다.
 - 고객이 mTLS를 명시 요구하면 별도 보안 트랙으로 분리합니다.
 
 ## Hubble과 Service Mesh 관측
 
-Hubble은 Service Mesh 활성화 이후에도 핵심 관측 도구입니다.
+관측은 Service Mesh datapath와 역할을 분리해서 봐야 합니다.
+Cilium Service Mesh는 Cilium eBPF와 Envoy로 L7 datapath를 구성하고, Hubble은 이 경로를 확인하기 위해 함께 쓰는 관측 계층입니다.
 
-기존 Hubble 관측:
+현재 chaining + Hubble 관측 트랙:
 
 ```text
 Pod -> Service -> Pod
   L3/L4 flow 중심
 ```
 
-Service Mesh 이후 관측:
+Service Mesh + Hubble 관측:
 
 ```text
 Client -> Gateway/Envoy -> Service -> Pod
@@ -337,7 +343,7 @@ Client Pod -> Service/GAMMA/Envoy -> Backend Pod
   L3/L4 + 일부 L7 HTTP/gRPC flow
 ```
 
-기대할 수 있는 것:
+Hubble을 함께 활성화하면 기대할 수 있는 것:
 
 - Gateway를 통과한 요청 flow
 - source/destination namespace/workload
@@ -374,9 +380,9 @@ Service web-v1 / web-v2
 Pod web-v1 / web-v2
 
 Observability:
-  Cilium/Hubble metrics -> Prometheus -> Grafana
-  Hubble Relay -> Hubble CLI/UI
-  Hubble exporter -> flow log
+  Cilium/Envoy metrics -> Prometheus -> Grafana
+  Hubble Relay/UI -> flow/service map
+  Hubble metrics/exporter -> metrics and flow log
 ```
 
 GAMMA PoC 목표 구조:
@@ -412,18 +418,19 @@ web-v1 / web-v2 backend
 | Gateway가 Programmed 되는가 | Gateway status 확인 |
 | LoadBalancer가 붙는가 | Gateway가 만든 Service 확인 |
 | hostNetwork가 필요한가 | LB 미할당 시 검토 |
-| Hubble에서 L7 flow가 보이는가 | Gateway/GAMMA 요청 후 Hubble 확인 |
+| Envoy/Cilium proxy metric이 증가하는가 | Gateway/GAMMA 요청 후 proxy metric 또는 로그 확인 |
+| Hubble에서 flow/L7 metric이 보이는가 | Gateway/GAMMA 요청 후 Hubble CLI/UI 또는 Prometheus 확인 |
 
 ## 가능한 검증 순서
 
 ```text
-1. 현재 Cilium/Hubble 정상 확인
+1. 현재 Cilium과 기존 Hubble 관측 트랙 정상 확인
 2. Gateway API CRD 설치
 3. Helm dry-run
 4. Cilium Gateway API 활성화
 5. Cilium/CoreDNS/metrics API 확인
 6. Gateway HTTP 샘플
-7. Hubble/Grafana 관측
+7. Envoy/Cilium proxy와 Hubble 관측 확인
 8. GAMMA HTTPRoute 샘플
 9. 결과에 따라 유지 또는 롤백
 ```

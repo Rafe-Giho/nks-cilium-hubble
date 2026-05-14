@@ -2,7 +2,7 @@
 
 - 목적: NKS Calico 환경에서 Cilium Service Mesh를 검토한 범위, 검증 순서, 최종 판정을 정리합니다.
 - 상태: concluded
-- 마지막 갱신: 2026-05-13
+- 마지막 갱신: 2026-05-14
 
 ## 최종 판정
 
@@ -28,7 +28,7 @@
 1. Calico를 primary CNI로 유지한 상태에서 Cilium chaining으로 Service Mesh가 가능한가
 2. Cilium Gateway API로 외부 north-south 트래픽을 처리할 수 있는가
 3. Cilium GAMMA로 내부 east-west Service 트래픽을 L7 라우팅할 수 있는가
-4. Hubble로 L7까지 관측할 수 있는가
+4. Cilium Envoy/L7 proxy 경로가 실제 datapath로 성립하는가
 5. 실패한다면 어디까지 가능한지 운영 범위를 정할 수 있는가
 
 ## 검증 순서

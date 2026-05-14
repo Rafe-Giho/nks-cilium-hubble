@@ -2,7 +2,7 @@
 
 - 목적: NKS 기본 Calico VXLAN 환경에서 Cilium `generic-veth` chaining으로 Cilium Service Mesh를 구성할 수 있는지 검증한 결과와 실패 원인을 정리합니다.
 - 상태: draft
-- 마지막 갱신: 2026-05-13
+- 마지막 갱신: 2026-05-14
 
 ## 최종 결론
 
@@ -379,7 +379,7 @@ Cilium eBPF policy redirect
 - Envoy HTTP request parsing
 - L7 policy allow/deny 판단
 - upstream backend 연결
-- Hubble HTTP L7 metric 증가
+- Envoy/Cilium proxy L7 metric 증가
 
 ### 상세 실패 사유
 
@@ -526,15 +526,15 @@ NKS 기본 Calico VXLAN
 | 요구 | 권장 방향 |
 | --- | --- |
 | 네트워크 flow 관측 | 현재 Cilium chaining + Hubble 유지 |
-| HTTP/L7 metrics 일부 | Hubble HTTP metrics는 Envoy/L7 proxy 경유 트래픽에 한정됨을 명시 |
+| HTTP/L7 metrics 일부 | 별도 Hubble/L7 관측을 켠 경우에도 Envoy/L7 proxy 경유 트래픽에 한정됨을 명시 |
 | sidecar-less mesh | Istio Ambient 별도 PoC |
-| mTLS, L7 authorization, 서비스 그래프 | Istio Ambient 또는 Istio sidecar 검토 |
+| mTLS, L7 authorization, 서비스 그래프 | Istio Ambient 별도 PoC |
 | Cilium Service Mesh 필수 | Cilium primary CNI가 가능한 별도 클러스터에서 PoC |
 
 ## 문서 반영 기준
 
 - 실행 가이드는 현재 NKS chaining에 억지로 Service Mesh를 구성하는 절차로 두지 않습니다.
-- 별도 가이드에는 Cilium primary 설치 시 Service Mesh와 Hubble L7 관측을 설정하는 정석 절차를 정리합니다.
+- 별도 가이드에는 Cilium primary 설치 시 Service Mesh 구성, Hubble 관측 계층, Envoy/Cilium proxy 검증 절차를 정리합니다.
 - 현재 NKS에서 실패한 증거와 판정은 이 보고서에 유지합니다.
 
 ## 참고 출처

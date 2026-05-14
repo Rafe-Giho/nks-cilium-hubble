@@ -1,8 +1,8 @@
 # Cilium Primary 기반 Service Mesh 실행 가이드
 
-- 목적: Cilium을 primary CNI/kube-proxy replacement로 설치하면서 Gateway API/GAMMA Service Mesh와 Hubble L7 관측을 구성하는 표준 절차를 정리합니다.
+- 목적: Cilium을 primary CNI/kube-proxy replacement로 설치하면서 Gateway API/GAMMA 기반 Cilium Service Mesh를 구성하는 표준 절차를 정리합니다.
 - 상태: draft
-- 마지막 갱신: 2026-05-13
+- 마지막 갱신: 2026-05-14
 
 ## 적용 범위
 
@@ -21,6 +21,9 @@ Cilium primary CNI
   + Cilium Envoy L7 proxy
 ```
 
+이 가이드는 운영 검증을 위해 Hubble 관측 계층도 함께 활성화합니다.
+다만 Hubble은 Service Mesh datapath 자체가 아니라, Envoy/L7 경로와 네트워크 flow를 확인하기 위한 관측 계층입니다.
+
 역할은 아래처럼 나뉩니다.
 
 | 구성요소 | 역할 |
@@ -28,7 +31,7 @@ Cilium primary CNI
 | Cilium CNI/eBPF datapath | Pod datapath, Service datapath, 정책, 로드밸런싱 |
 | `kubeProxyReplacement=true` | kube-proxy가 하던 ClusterIP/NodePort/LoadBalancer Service 처리를 Cilium eBPF로 대체 |
 | Cilium Envoy | HTTP/gRPC L7 라우팅, Gateway API, GAMMA, CiliumEnvoyConfig 처리 |
-| Hubble | Cilium datapath와 Envoy 경유 flow 관측 |
+| Hubble | Cilium flow, drop, DNS, HTTP L7 metrics/flow 관측 |
 
 Envoy가 kube-proxy를 대체하는 것이 아닙니다.
 Cilium eBPF가 kube-proxy를 대체하고, Envoy는 L7 처리를 담당합니다.
@@ -40,10 +43,10 @@ Helm 설치만으로 Service Mesh가 완료된 것은 아닙니다.
 | 단계 | 의미 | 완료 판정 |
 | --- | --- | --- |
 | Gateway API CRD 설치 | Kubernetes API 타입 추가 | 설치 준비 |
-| Cilium 설치 | primary CNI, KPR, Hubble, Envoy 기능 활성화 | 기능 활성화 |
+| Cilium 설치 | primary CNI, KPR, Envoy 기능 활성화 | 기능 활성화 |
+| Hubble 활성화 | Relay/UI/metrics/exporter 관측 계층 활성화 | 관측 경로 완료 |
 | Gateway API 샘플 성공 | 외부 north-south L7 라우팅 검증 | Gateway 경로 완료 |
 | GAMMA 샘플 성공 | 내부 east-west Service L7 라우팅 검증 | Mesh 경로 완료 |
-| Hubble HTTP metrics 확인 | L7 proxy 경유 flow 관측 확인 | 관측 완료 |
 
 ## 전제 조건
 
@@ -52,7 +55,7 @@ Helm 설치만으로 Service Mesh가 완료된 것은 아닙니다.
 - Cilium이 Pod datapath와 Service datapath를 소유할 수 있는 환경
 - Gateway API CRD 설치 가능
 - LoadBalancer 또는 hostNetwork/NodePort 노출 정책 확정
-- Prometheus/Grafana 또는 Hubble CLI 사용 가능
+- Hubble Relay/UI와 Prometheus/Grafana 등 Cilium/Envoy/Hubble metrics 수집 체계 사용 가능
 
 NKS 기본 Calico 클러스터처럼 provider가 primary CNI를 고정하는 환경에서는 먼저 Cilium primary CNI 지원 여부를 공급자에게 확인해야 합니다.
 
@@ -129,16 +132,6 @@ hubble:
     enabled: true
   ui:
     enabled: true
-  metrics:
-    enableOpenMetrics: true
-    enabled:
-      - dns:query;ignoreAAAA
-      - drop
-      - tcp
-      - flow
-      - port-distribution
-      - icmp
-      - "httpV2:exemplars=true;labelsContext=source_namespace,source_workload,destination_namespace,destination_workload,traffic_direction"
 ```
 
 환경에 따라 추가 검토가 필요한 항목:
@@ -150,6 +143,8 @@ hubble:
 | `loadBalancer.l7.backend` | CiliumEnvoyConfig L7 LB를 명시적으로 Envoy로 보낼 때 사용 |
 | `ingressController.enabled` | Ingress API까지 Cilium으로 처리할 때만 활성화 |
 | `gatewayAPI.hostNetwork.enabled` | LoadBalancer 없이 node listener로 노출할 때만 사용 |
+| `hubble.metrics.enabled` | HTTP L7, DNS, drop, flow metrics 수집 범위 기준 |
+| `hubble.export` | flow 로그 장기 보관이 필요할 때 사용 |
 
 ## 3. Helm dry-run
 
@@ -169,7 +164,7 @@ helm upgrade --install cilium oci://quay.io/cilium/charts/cilium \
 확인:
 
 ```bash
-grep -E "kube-proxy-replacement|enable-gateway-api|enable-envoy-config|enable-l7-proxy|enable-hubble" artifacts/service-mesh/30-cilium-primary-service-mesh-dry-run.yaml
+grep -E "kube-proxy-replacement|enable-gateway-api|enable-envoy-config|enable-l7-proxy|enable-hubble|hubble" artifacts/service-mesh/30-cilium-primary-service-mesh-dry-run.yaml
 ```
 
 기대값:
@@ -178,7 +173,7 @@ grep -E "kube-proxy-replacement|enable-gateway-api|enable-envoy-config|enable-l7
 - `enable-gateway-api: "true"`
 - `enable-envoy-config: "true"`
 - `enable-l7-proxy: "true"`
-- Hubble relay/UI/metrics enabled
+- Hubble Relay/UI/metrics 관련 리소스 렌더링
 
 ## 4. Cilium 설치
 
@@ -197,8 +192,8 @@ helm upgrade --install cilium oci://quay.io/cilium/charts/cilium \
 ```bash
 kubectl -n kube-system rollout status ds/cilium --timeout=10m
 kubectl -n kube-system rollout status deployment/cilium-operator --timeout=10m
-kubectl -n kube-system rollout status deployment/hubble-relay --timeout=10m
-kubectl -n kube-system rollout status deployment/hubble-ui --timeout=10m
+kubectl -n kube-system rollout status deployment/hubble-relay --timeout=5m
+kubectl -n kube-system rollout status deployment/hubble-ui --timeout=5m
 
 cilium status --wait
 ```
@@ -216,6 +211,7 @@ kubectl -n kube-system exec ds/cilium -c cilium-agent -- cilium-dbg status --ver
 - `CNI Chaining` 없음 또는 disabled
 - `GatewayClass/cilium` 생성
 - `cilium-envoy` Ready
+- Hubble Relay/UI Ready
 
 ## 5. 기본 datapath 검증
 
@@ -263,12 +259,12 @@ curl -H "Host: mesh-demo.example" "http://${GATEWAY_IP}/"
 - `Gateway` Programmed=True
 - `HTTPRoute` Accepted=True
 - HTTP 응답 성공
-- Hubble에서 client -> Gateway/Envoy -> backend flow 확인
 
 ## 7. GAMMA east-west 검증
 
 GAMMA는 Service를 parent로 하는 HTTPRoute를 통해 내부 Service 트래픽을 per-node Envoy로 전달합니다.
-Cilium은 producer route를 지원하며, HTTPRoute는 parent Service와 같은 namespace에 둡니다.
+이 가이드는 Cilium 문서 기준 지원되는 producer route, 즉 parent Service와 같은 namespace의 `parentRef=Service` HTTPRoute 검증을 기본 대상으로 둡니다.
+consumer route 지원 여부는 사용하는 Cilium/Gateway API 버전의 GAMMA 문서로 별도 확인합니다.
 
 ```bash
 kubectl apply -f manifests/service-mesh/21-demo-gamma-http-route.yaml
@@ -293,7 +289,7 @@ kubectl -n cilium-service-mesh-demo exec curl -- curl -sS http://web/
 - `ResolvedRefs=True`
 - `http://web/` 요청 성공
 - 가중치 설정에 따라 `web-v1`, `web-v2` 응답 분산
-- Envoy/Hubble HTTP metrics 증가
+- Envoy 또는 Cilium proxy metrics 증가
 
 ## 8. HTTP L7 Policy 검증
 
@@ -364,40 +360,45 @@ kubectl -n cilium-l7-check exec curl -- curl -sS -m 5 -o /tmp/blocked.out -w '%{
 - `/` 요청은 허용
 - `/blocked` 요청은 L7 policy에 의해 차단
 - `cilium-dbg status --verbose`에서 active redirect 증가
-- Hubble HTTP flow 또는 Prometheus `httpV2` metric 증가
+- Envoy 또는 Cilium proxy metrics 증가
 
-## 9. Hubble L7 관측
+## 9. Cilium Envoy와 Hubble 관측 확인
 
-Hubble Relay port-forward:
-
-```bash
-kubectl -n kube-system port-forward svc/hubble-relay 4245:80 --address 127.0.0.1
-```
-
-Hubble CLI:
+기본 상태:
 
 ```bash
-hubble status --server localhost:4245
-hubble observe --server localhost:4245 --namespace cilium-service-mesh-demo --last 100
-hubble observe --server localhost:4245 --namespace cilium-service-mesh-demo --protocol http --last 100
+kubectl -n kube-system exec ds/cilium -c cilium-agent -- cilium-dbg status --verbose
+kubectl -n kube-system get ds cilium-envoy -o wide
+kubectl -n kube-system get deploy hubble-relay hubble-ui -o wide
 ```
 
-Prometheus/Grafana 확인 항목:
+Envoy 로그:
 
-- DNS query count
-- TCP flow
-- drop verdict
-- HTTP request count
-- HTTP status code
-- source/destination namespace
-- source/destination workload
-- traffic direction
+```bash
+kubectl -n kube-system logs ds/cilium-envoy --tail=100
+```
+
+Hubble CLI가 준비된 경우:
+
+```bash
+cilium hubble status
+hubble observe --namespace cilium-service-mesh-demo --last 20
+hubble observe --namespace cilium-service-mesh-demo --protocol http --last 20
+```
+
+Prometheus/Grafana가 구성된 경우 확인 항목:
+
+- Cilium agent metrics
+- Cilium Envoy metrics
+- Hubble flow/drop/DNS/HTTP metrics
+- L7 redirect/proxy 관련 metric
+- Gateway/GAMMA 요청 성공률과 latency
 
 주의:
 
-- Hubble은 network flow 관측 도구입니다.
+- 이 가이드는 Cilium Service Mesh와 Hubble 관측 계층을 함께 다룹니다.
+- Hubble은 flow/L7 visibility 도구이며, 요청 단위 distributed trace의 대체재는 아닙니다.
 - 애플리케이션 trace span, request id, call tree는 OpenTelemetry/Tempo/Jaeger 같은 tracing 도구가 필요합니다.
-- HTTP L7 metric은 Envoy/L7 proxy를 경유한 트래픽에서 확인됩니다.
 
 ## 10. 정리
 
@@ -432,4 +433,3 @@ Gateway API CRD는 다른 controller가 사용할 수 있으므로 즉시 삭제
 - Cilium GAMMA: https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gamma/
 - Cilium L7 Traffic Management: https://docs.cilium.io/en/stable/network/servicemesh/l7-traffic-management/
 - Cilium kube-proxy replacement: https://docs.cilium.io/en/stable/network/kubernetes/kubeproxy-free/
-- Hubble setup: https://docs.cilium.io/en/stable/observability/hubble/setup/
