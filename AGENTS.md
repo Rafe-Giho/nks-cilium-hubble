@@ -2,7 +2,7 @@
 
 - 목적: 이 저장소에서 Codex가 따라야 할 작업 원칙과 문서 관리 규칙을 정의합니다.
 - 상태: active
-- 마지막 갱신: 2026-05-06
+- 마지막 갱신: 2026-05-14
 
 이 저장소의 목적은 NHN Cloud NKS에서 sidecar-less 트래픽 관측 방안을 검토하고, Calico 유지 기반 Cilium chaining + Hubble 구성을 설계, 검증, 문서화하는 것입니다.
 
@@ -75,4 +75,4 @@
 2. 단일 클러스터 PoC 환경 인벤토리 확정
 3. `Calico 유지 + Cilium generic-veth chaining + Hubble` 실행 가이드 정합성 유지
 4. Hubble UI/CLI, Grafana metrics, exporter 모니터링 선택 기준 정리
-5. Pixie, Beyla, Calico-eBPF 등 후속 sidecar-less 관측 후보 비교
+5. Cilium Service Mesh는 Cilium primary CNI가 가능한 별도 환경 기준으로만 비교/가이드 유지

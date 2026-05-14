@@ -2,7 +2,7 @@
 
 - 목적: 실제 업무 애플리케이션 없이 Calico chaining + Hubble 가시성을 검증할 최소 시나리오를 정의합니다.
 - 상태: draft
-- 마지막 갱신: 2026-05-06
+- 마지막 갱신: 2026-05-14
 
 ## 기본 원칙
 
@@ -42,6 +42,6 @@
 
 ## 후속 비교 시나리오
 
-- 서비스메쉬 도입 전후 리소스 사용량 비교
-- Hubble 가시성과 Pixie/Beyla/OTel 조합 비교
-- Calico-eBPF 기반 관측 가능성 비교
+- Cilium Service Mesh 검증은 `docs/service-mesh/02-validation-checklist.md` 기준으로 별도 수행
+- Hubble L3/L4 관측과 Cilium Service Mesh L7/Envoy 경로를 분리해서 결과 기록
+- Cilium Service Mesh 운영 무게 비교는 `docs/service-mesh/04-operational-weight-comparison.md` 기준으로 관리

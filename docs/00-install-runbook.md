@@ -2,7 +2,7 @@
 
 - 목적: sidecar-less 트래픽 모니터링 PoC의 실행 순서와 각 가이드 진입점을 고정합니다.
 - 상태: draft
-- 마지막 갱신: 2026-05-11
+- 마지막 갱신: 2026-05-14
 
 ## 기본 방향
 
@@ -10,7 +10,7 @@
 
 NKS 릴리스 노트 기준 cluster CNI change는 비지원 상태이며, 실제 실험에서도 Calico VXLAN 호환 경로 없이는 control-plane-to-pod 경로가 정상화되지 않았습니다.
 
-현재 `90`, `91` 문서는 full replacement 실패 기록 보존용입니다. 후속 실행 가이드는 Calico 유지 기반 chaining, Pixie, Beyla, Calico-eBPF 방향으로 재설계합니다.
+현재 `90`, `91` 문서는 full replacement 실패 기록 보존용입니다. 후속 실행 가이드는 Calico 유지 기반 Cilium chaining + Hubble과 Cilium Service Mesh 별도 트랙으로 관리합니다.
 
 ## 실행 원칙
 
@@ -33,8 +33,6 @@ NKS 릴리스 노트 기준 cluster CNI change는 비지원 상태이며, 실제
 | 05 | `docs/05-calico-chaining-hubble-runbook.md` | Calico 유지 + Cilium chaining + Hubble 실행 가이드 |
 | 06 | `docs/06-hubble-observability-runbook.md` | Hubble UI/CLI, Grafana metrics, exporter 기반 모니터링 가이드 |
 | SM | `docs/service-mesh/` | 고객 요청 시 Cilium Gateway API/GAMMA 기반 Service Mesh 별도 트랙 |
-| 40 | `docs/40-option-pixie.md` | 추가 후보: Pixie |
-| 50 | `docs/50-option-grafana-beyla.md` | 추가 후보: Grafana Beyla |
 | 90 | `docs/90-full-replacement-execution-record.md` | NKS Cilium full replacement 실행 기록 아카이브 |
 | 91 | `docs/91-full-replacement-assets-archive.md` | NKS Cilium full replacement manifest/script 자산 아카이브 |
 
@@ -106,9 +104,8 @@ hubble version
 3. `docs/04-nks-security-group.md`에서 보안그룹 전제와 포트를 확인합니다.
 4. Cilium 기반 검증은 `docs/05-calico-chaining-hubble-runbook.md`를 우선 실행합니다.
 5. Hubble을 모니터링 용도로 확장하려면 `docs/06-hubble-observability-runbook.md`를 확인합니다.
-6. Cilium 외 sidecar-less 관측 대안은 `docs/40-option-pixie.md`, `docs/50-option-grafana-beyla.md`를 기준으로 비교합니다.
-7. 고객 요청으로 Service Mesh 도입이 필요하면 `docs/service-mesh/`와 `manifests/service-mesh/`를 별도 트랙으로 검토합니다.
-8. Ingress/Gateway API 문서(`docs/02-ingress-vs-gateway-api-reference.md`)와 full replacement 실패 기록(`docs/90-full-replacement-execution-record.md`, `docs/91-full-replacement-assets-archive.md`)은 참고/아카이브로 봅니다.
+6. 고객 요청으로 Service Mesh 도입이 필요하면 `docs/service-mesh/`와 `manifests/service-mesh/`를 별도 트랙으로 검토합니다.
+7. Ingress/Gateway API 문서(`docs/02-ingress-vs-gateway-api-reference.md`)와 full replacement 실패 기록(`docs/90-full-replacement-execution-record.md`, `docs/91-full-replacement-assets-archive.md`)은 참고/아카이브로 봅니다.
 
 운영형 Grafana 검증은 `docs/06-hubble-observability-runbook.md` 3장을 따릅니다. 적용 자산은 `manifests/06-kube-prometheus-stack-values.yaml`과 `manifests/06-cilium-hubble-metrics-values.yaml`입니다.
 

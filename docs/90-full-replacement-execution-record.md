@@ -525,6 +525,5 @@ artifacts/route-keeper-verify-20260430-142823/
 
 ```text
 - Calico 유지 + Cilium chaining + Hubble
-- Calico VXLAN 유지 + Pixie/Beyla 등 sidecar-less 관측 도구
-- Calico-eBPF 기반 신규 클러스터 + sidecar-less 관측 도구
+- Cilium Service Mesh는 Cilium primary CNI가 가능한 별도 환경에서만 재검증
 ```

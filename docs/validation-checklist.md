@@ -2,7 +2,7 @@
 
 - 목적: 변경 전후 확인 항목을 일관되게 관리합니다.
 - 상태: draft
-- 마지막 갱신: 2026-05-06
+- 마지막 갱신: 2026-05-14
 
 ## 변경 전 확인
 
@@ -33,7 +33,7 @@
 | Cilium Operator 정상 | Deployment Ready | 통과: 2/2 |
 | `cilium status --wait` 정상 | Cilium OK | 통과: 리소스 Ready, CLI 출력 별도 보존 필요 |
 | Calico 기존 네트워킹 유지 | `calico-node` 2/2 유지 | 통과: 신규 Pod/Service 통신 정상 |
-| kube-proxy replacement 비활성 | `kubeProxyReplacement=false` | 통과 |
+| kube-proxy replacement 상태 | chaining 관측 전용이면 `false`, Service Mesh 검증 이후에는 실제 설정값을 별도 기록 | 현재 Service Mesh 검증 과정에서 `true`로 변경 이력 있음 |
 | metrics APIService 유지 | Available True | 통과 |
 
 ## 신규 Pod 확인
@@ -77,13 +77,14 @@
 | Grafana dashboard 확인 | Cilium/Hubble dashboard 자동 로드 | `[입력 필요]` |
 | PromQL 확인 | `{__name__=~"hubble_.*"}` 결과 존재 | `[입력 필요]` |
 
-## 대안 관측 도구 확인
+## Cilium Service Mesh 확인
+
+Service Mesh 검증은 `docs/service-mesh/02-validation-checklist.md`와 `docs/service-mesh/05-build-result-report.md`에서 별도 관리합니다.
 
 | 항목 | 기대 결과 | 상태 |
 | --- | --- | --- |
-| Pixie 검토 | CNI 변경 없는 eBPF 관측 가능성 판단 | `[입력 필요]` |
-| Grafana Beyla 검토 | 앱/서비스 관측 가능성 판단 | `[입력 필요]` |
-| Calico-eBPF 검토 | NKS 적용 가능성 별도 판단 | `[입력 필요]` |
+| 현재 NKS chaining 환경 판정 | Cilium Service Mesh 운영 가능/불가 결론 명확화 | 결론: 운영 불가 |
+| Cilium primary 표준 가이드 | 별도 환경 구축 절차 분리 | `docs/service-mesh/01-cilium-service-mesh-runbook.md` 작성 |
 
 ## 성능/운영성 확인
 

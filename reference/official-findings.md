@@ -2,7 +2,7 @@
 
 - 목적: 현재 PoC 범위에 직접 영향을 주는 공식 문서 근거를 빠르게 확인합니다.
 - 상태: draft
-- 마지막 갱신: 2026-04-22
+- 마지막 갱신: 2026-05-14
 
 ## NHN Cloud NKS
 
@@ -112,7 +112,7 @@
 - 출처: https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/
 - 확인 날짜: 2026-04-22
 - 핵심 사항
-  - Cilium stable 1.19.3 문서 기준 Gateway API `v1.4.1`을 지원합니다.
+  - Cilium stable 1.19.x 문서 기준 Gateway API `v1.4.1`을 지원합니다.
   - `GatewayClass`, `Gateway`, `HTTPRoute`, `GRPCRoute`, `TLSRoute`, `ReferenceGrant`를 다룹니다.
   - 사용 전 Gateway API CRD를 사전 설치해야 합니다.
   - 기본 노출 방식은 `LoadBalancer`이고, host network 모드도 지원합니다.
@@ -129,30 +129,5 @@
   - 일부 고급 기능은 제한될 수 있습니다.
   - 기존 Pod는 재시작해야 새 chaining 구성이 적용됩니다.
 - 판단
-  - sidecar-less 네트워크 가시성만 빨리 보려면 낮은 리스크 대안입니다.
-  - 다만 full replacement 목표와는 성격이 다릅니다.
-
-## Pixie 특성
-
-- 출처: https://docs.px.dev/about-pixie/what-is-pixie/
-- 확인 날짜: 2026-04-22
-- 핵심 사항
-  - Pixie는 eBPF 기반 Kubernetes 관측 도구입니다.
-  - 네트워크, 서비스 맵, 요청 추적, 프로파일링 등 폭넓은 관측을 제공합니다.
-  - Hosted 방식은 외부 Pixie Cloud와의 통신을 요구할 수 있습니다.
-- 판단
-  - sidecar-less 관측 목적에는 매우 잘 맞습니다.
-  - 하지만 CNI/Ingress replacement 성격은 아닙니다.
-
-## Grafana Beyla 특성
-
-- 출처: https://grafana.com/docs/beyla/latest/
-- 확인 날짜: 2026-04-22
-- 핵심 사항
-  - Beyla는 eBPF 기반 auto-instrumentation 도구입니다.
-  - RED metrics와 basic traces 수집에 적합합니다.
-  - Kubernetes DaemonSet, Helm 배포를 지원합니다.
-  - Cilium과 함께 쓸 때 TCX 또는 TC priority 설정 호환성을 봐야 합니다.
-- 판단
-  - sidecar-less 앱 관측 후보로 적합합니다.
-  - Hubble와 같은 네트워크 중심 UX를 대체하는 것은 아닙니다.
+  - Cilium chaining + Hubble은 NKS 기본 Calico를 유지하면서 네트워크 flow 관측을 추가하는 낮은 리스크 경로입니다.
+  - 다만 full replacement 또는 Cilium Service Mesh 목표와는 성격이 다릅니다.

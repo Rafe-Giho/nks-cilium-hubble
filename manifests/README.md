@@ -2,7 +2,7 @@
 
 - 목적: Helm values, Kubernetes YAML, 샘플 설정의 저장 규칙을 관리합니다.
 - 상태: active
-- 마지막 갱신: 2026-05-11
+- 마지막 갱신: 2026-05-14
 
 실제 적용 자산을 관리합니다.
 
@@ -30,6 +30,5 @@
 
 ## 후속 작성 대상
 
-- Pixie 검토용 manifest 또는 설치 메모
-- Grafana Beyla DaemonSet values
-- Calico-eBPF 검토용 별도 values 또는 체크리스트
+- Cilium chaining + Hubble 운영형 모니터링 values 보완
+- Cilium Service Mesh primary CNI 환경용 샘플 values 보완
